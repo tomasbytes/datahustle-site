@@ -45,7 +45,9 @@ An "Intelligence & Innovation partner" that turns data into measurable business 
 From DataHustle's brand book. These are binding.
 - Tone: authoritative, precise, restrained. Mathematical and geometric logic.
 - Colors: Black #000000 (primary, typography), Off-white #F7F7F7 (background), Brand blue #3335FF (accent only, used selectively). An optional blue-to-off-white gradient, used sparingly.
-- Typeface: Alfabet (Regular, Medium, SemiBold, Bold). The files in `brand/` are Fontspring DEMO versions. They have only 95 characters: no curly quotes, no €, no accented letters. They are not licensed for use on a website. A full licensed web version is needed before launch. Until then, build with the demo files, avoid characters they lack, and flag it.
+- Typeface: Alfabet is the brand font. The files in `brand/` are Fontspring DEMO versions: they replace "4", "%" and "&" with a DEMO stamp and are not licensed for websites, so the site does not use them.
+- Website font, chosen by the user: **Schibsted Grotesk** (free, OFL licence, Google Fonts), the closest free match to Alfabet. Host the files with the site, using the same weights as Alfabet: Regular 400, Medium 500, SemiBold 600, Bold 700. It has no Greek letters, which is fine for an English-only site. If an Alfabet web licence is bought later, swap the font files back.
+- The logo stays in Alfabet because it's an outlined SVG/PNG file, not live text.
 - Type scale: Heading 42px Bold / 1.1; Subheading 22px SemiBold / 1.2; Body 16px / 21px; Notes 12px / 16px.
 - Emphasis uses SemiBold weight only, never color.
 - Strict grid. No shadows, no decorative effects.
