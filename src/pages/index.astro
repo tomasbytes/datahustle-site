@@ -294,7 +294,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     margin-top: calc(var(--i) * clamp(1.5rem, 4.5vw, 4.5rem));
   }
   .point {
-    position: absolute; left: 0; top: 0; width: 11px; height: 11px; translate: -5px -5px;
+    position: absolute; left: 0; top: 0; z-index: 7; /* above the thread */ width: 11px; height: 11px; translate: -5px -5px;
     border: 1px solid var(--paper); border-radius: 50%; background: var(--black);
     transition: background-color 300ms var(--ease), border-color 300ms var(--ease), scale 300ms var(--ease-out);
   }

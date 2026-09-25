@@ -45,7 +45,9 @@ export function mountThread(svg: SVGSVGElement) {
       // lets go). Narrow screens: from under the readout panel, because the
       // map may still be tilted as it scrolls away.
       const flatAtExit = matchMedia('(min-width: 60.01rem)').matches;
-      route.push({ x: sr.left - hostRect.left + u * sr.width, y: pinFinal + (sr.top - pr.top) + (flatAtExit ? v * sr.height : sr.height) });
+      const panel = instrument.querySelector<HTMLElement>('.panel');
+      const below = panel ? panel.getBoundingClientRect().bottom - sr.top : sr.height;
+      route.push({ x: sr.left - hostRect.left + u * sr.width, y: pinFinal + (sr.top - pr.top) + (flatAtExit ? v * sr.height : below) });
     }
     for (const el of document.querySelectorAll<HTMLElement>('[data-thread-point]')) {
       const r = el.getBoundingClientRect();

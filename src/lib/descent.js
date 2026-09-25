@@ -3,7 +3,18 @@
 import { contours } from 'd3-contour';
 import { f, levels, fromUnit, toUnit, run, START } from './fn.js';
 
-// Douglas–Peucker simplification in unit coordinates.
+// Douglas–Peucker simplification in unit coordinates. A closed ring (first
+// point == last) has no baseline, so split it at its farthest point first.
+function simplifyLine(pts, tol) {
+  const [a, z] = [pts[0], pts[pts.length - 1]];
+  if (pts.length > 3 && a[0] === z[0] && a[1] === z[1]) {
+    let far = 1, dmax = 0;
+    pts.forEach((p, i) => { const d = Math.hypot(p[0] - a[0], p[1] - a[1]); if (d > dmax) { dmax = d; far = i; } });
+    return [...simplify(pts.slice(0, far + 1), tol).slice(0, -1), ...simplify(pts.slice(far), tol)];
+  }
+  return simplify(pts, tol);
+}
+
 function simplify(pts, tol) {
   if (pts.length < 3) return pts;
   const [a, b] = [pts[0], pts[pts.length - 1]];
@@ -40,7 +51,7 @@ export function contourLines(res = 180, tol = 0.0012) {
       if (cur.length > 1) lines.push(cur);
     }
     const span = (l) => { const us = l.map((p) => p[0]), vs = l.map((p) => p[1]); return Math.max(Math.max(...us) - Math.min(...us), Math.max(...vs) - Math.min(...vs)); };
-    return { level: lv[k], lines: lines.filter((l) => span(l) > 0.01).map((l) => simplify(l, tol).map(([u, v]) => [+u.toFixed(4), +v.toFixed(4)])) };
+    return { level: lv[k], lines: lines.filter((l) => span(l) > 0.01).map((l) => simplifyLine(l, tol).map(([u, v]) => [+u.toFixed(4), +v.toFixed(4)])) };
   });
 }
 

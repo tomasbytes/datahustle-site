@@ -252,8 +252,8 @@ export function mountInstrument(root: HTMLElement) {
     if (tilt >= 0.04) return;
     const r = canvas.getBoundingClientRect();
     const { u, v } = unproject(e.clientX - r.left, e.clientY - r.top);
-    // Keep the first strides inside the plot: start no closer than 8% to an edge.
-    const cl = (n: number) => Math.min(0.92, Math.max(0.08, n));
+    // Keep the first strides inside the plot: start no closer than 15% to an edge.
+    const cl = (n: number) => Math.min(0.85, Math.max(0.15, n));
     hint.textContent = 'Descending from your point.';
     startRun(fromUnit(cl(u), cl(v)));
     window.dataLayer?.push({ event: 'instrument_descent' });

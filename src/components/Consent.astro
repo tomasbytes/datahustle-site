@@ -3,8 +3,7 @@
 // GTM itself loads only after the visitor accepts.
 ---
 <section class="consent" data-consent hidden aria-labelledby="consent-title">
-  <p id="consent-title" class="title">Cookies</p>
-  <p class="text">We use analytics cookies to understand how this site is used. They load only if you accept.</p>
+  <p id="consent-title" class="text"><b>Cookies.</b> Analytics cookies load only if you accept.</p>
   <div class="actions">
     <button type="button" class="button ghost" data-consent-choice="granted">Accept</button>
     <button type="button" class="button ghost" data-consent-choice="denied">Reject</button>
@@ -34,17 +33,16 @@
     position: fixed; z-index: 40;
     left: max(1rem, env(safe-area-inset-left, 0px));
     bottom: max(1rem, env(safe-area-inset-bottom, 0px));
-    width: min(20rem, calc(100vw - 2rem));
-    padding: 1rem;
+    width: min(17.5rem, calc(100vw - 2rem));
+    padding: 0.75rem;
     background: var(--paper);
     border: 1px solid var(--black);
-    display: grid; gap: 0.625rem;
+    display: grid; gap: 0.5rem;
     font-size: 0.875rem; line-height: 1.35;
     transition: opacity 240ms var(--ease-out), transform 240ms var(--ease-out);
     @starting-style { opacity: 0; transform: translateY(8px); }
   }
-  .title { font-weight: 600; }
-  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.25rem; }
-  .actions .button { min-height: 2.5rem; padding: 0 1rem; font-size: 0.875rem; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .actions .button { min-height: 2.25rem; padding: 0 1rem; font-size: 0.875rem; }
   @media (prefers-reduced-motion: reduce) { .consent { transition: opacity 200ms ease; @starting-style { transform: none; } } }
 </style>
