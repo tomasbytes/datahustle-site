@@ -50,10 +50,15 @@ const curveLayout: P[] = Array.from({ length: N }, (_, i) => {
   const u = k / (m - 1);
   return [X(u), Y(ret(CH[c], u * MAXS) / MAXR)];
 });
-const cand: P[] = Array.from({ length: N }, () => {
+const candRaw: P[] = Array.from({ length: N }, () => {
   const e = 0.04 + r() * 0.92;
   return [e, Math.max(0.04, (1 - (1 - e) ** 2.3) * (0.48 + r() * 0.52))];
-});
+}).sort((a, b) => a[0] - b[0]);
+// Give each point the candidate whose effort matches its x on the curves, so
+// the curves collapse sideways into the frontier instead of crossing over.
+const byX = Array.from({ length: N }, (_, i) => i).sort((a, b) => curveLayout[a][0] - curveLayout[b][0]);
+const cand: P[] = new Array(N);
+byX.forEach((pt, k) => (cand[pt] = candRaw[k]));
 const frontier = cand.map((p, i) => ({ p, i })).filter(({ p: [e, v] }) => !cand.some(([e2, v2]) => e2 <= e && v2 >= v && (e2 < e || v2 > v))).sort((a, b) => a.p[0] - b.p[0]).map((o) => o.i);
 const paretoLayout: P[] = cand.map(([e, v]) => [X(e), Y(v)]);
 
@@ -89,6 +94,7 @@ export function mountMorph(root: HTMLElement, opts: { fixedChapter?: number } = 
   const spend = [...root.querySelectorAll<HTMLInputElement>('[data-spend-in]')];
   const out = (name: string) => root.querySelector<HTMLElement>(`[data-out="${name}"]`);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = matchMedia('(pointer: coarse)').matches;
 
   let s = 0.1, userNoise = false;
   let focus: number | null = null;
@@ -142,7 +148,7 @@ export function mountMorph(root: HTMLElement, opts: { fixedChapter?: number } = 
       gCurves[c].setAttribute('opacity', w[2].toFixed(3));
       const last = pos[idx[idx.length - 1]];
       labels[c].setAttribute('x', (last[0] + 10).toFixed(1)); labels[c].setAttribute('y', (last[1] + 4).toFixed(1));
-      labels[c].setAttribute('opacity', w[2].toFixed(3));
+      labels[c].setAttribute('opacity', (w[2] ** 4).toFixed(3));
     });
     gFront.setAttribute('points', pts(frontier));
     gFront.setAttribute('opacity', w[3].toFixed(3));
@@ -191,7 +197,7 @@ export function mountMorph(root: HTMLElement, opts: { fixedChapter?: number } = 
     const on = out('noise');
     if (on) on.textContent = `σ ${(0.2 * (1 - s)).toFixed(3)}`;
     const onet = out('net');
-    if (onet) onet.textContent = focus === null ? 'Hover an input node to raise it to 1.0' : `input ${focus + 1} = 1.0`;
+    if (onet) onet.textContent = focus === null ? `${coarse ? 'Tap' : 'Hover'} an input node to raise it to 1.0` : `input ${focus + 1} = 1.0`;
 
     // Text panels and the margin numbers follow the dominant chapter.
     const lead = w.indexOf(Math.max(...w));

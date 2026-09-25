@@ -15,6 +15,8 @@ export function mountMethod(section: HTMLElement) {
   const panels = [...section.querySelectorAll<HTMLElement>('[data-panel]')];
   const wide = matchMedia('(min-width: 60.01rem)');
   let len = 0;
+  let cumX: number[] = [0], trackW = 1;
+  const lengthAtX = (x: number) => { const f = Math.min(160, Math.max(0, (x / trackW) * 160)), i = Math.floor(f); return i >= 160 ? cumX[160] : cumX[i] + (cumX[i + 1] - cumX[i]) * (f - i); };
   // The path: steep at first, flattening toward the minimum, like the hero's.
   const yOf = (u: number) => 0.2 + 0.4 * (1 - Math.exp(-2.6 * Math.max(0, u - 0.04)));
 
@@ -33,14 +35,25 @@ export function mountMethod(section: HTMLElement) {
       panels.forEach((p, i) => p.style.setProperty('--py', `${(yOf(0.2 * (i + 1)) * h).toFixed(1)}px`));
     }
     len = path?.getTotalLength() || 0;
-    if (path) path.style.strokeDasharray = `${len}`;
+    if (path) {
+      path.style.strokeDasharray = `${len}`;
+      // Arc length at each sample, to draw the line exactly up to a given x.
+      const w = track.scrollWidth, h = track.offsetHeight;
+      cumX = [0];
+      for (let i = 1; i <= 160; i++) cumX.push(cumX[i - 1] + Math.hypot(w / 160, (yOf(i / 160) - yOf((i - 1) / 160)) * h));
+      trackW = w;
+    }
     update();
   }
   function update() {
     if (!wide.matches || reduced()) {
-      points.forEach((p) => p.classList.add('is-lit'));
-      panels.forEach((p) => p.classList.add('is-on'));
       if (path) { path.style.strokeDasharray = ''; path.style.strokeDashoffset = ''; }
+      panels.forEach((p) => p.classList.add('is-on'));
+      if (reduced()) { points.forEach((p) => p.classList.add('is-lit')); points.at(-1)?.classList.add('is-current'); return; }
+      // Narrow screens: points light as their step passes the middle of the screen.
+      let cur: HTMLElement | null = null;
+      panels.forEach((panel, i) => { const on = panel.getBoundingClientRect().top < innerHeight * 0.6; points[i]?.classList.toggle('is-lit', on); if (on) cur = points[i]; });
+      points.forEach((pt) => pt.classList.toggle('is-current', pt === cur));
       return;
     }
     const r = section.getBoundingClientRect();
@@ -48,7 +61,8 @@ export function mountMethod(section: HTMLElement) {
     const p = clamp(-r.top / Math.max(1, travel));
     const extra = track.scrollWidth - innerWidth;
     track.style.transform = `translate3d(${(-p * extra).toFixed(1)}px, 0, 0)`;
-    if (path) path.style.strokeDashoffset = String(len * (1 - clamp(0.22 + p * 0.9)));
+    // The line reaches exactly as far as the lighting threshold (62% of the viewport).
+    if (path) path.style.strokeDashoffset = String(Math.max(0, len - lengthAtX(p * extra + innerWidth * 0.62)));
     let current: HTMLElement | null = null;
     panels.forEach((panel, i) => {
       const on = panel.getBoundingClientRect().left < innerWidth * 0.62;

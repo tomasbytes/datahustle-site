@@ -78,7 +78,7 @@ const W = (x: number, y: number, h: number): [number, number, number] => [x, h *
 
 // `flat`: the closing view. The same landscape, optimised almost flat, with a
 // few calm particles and a slow fixed orbit.
-export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; staticFrame?: boolean; flat?: boolean }) {
+export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; staticFrame?: boolean; flat?: boolean; particles?: number }) {
   const FLAT = opts.flat ? 0.14 : 1;
   const gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'high-performance' });
   if (!gl) return null;
@@ -119,7 +119,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
   const terrainCount = terrain.length / 3;
 
   // ---------- particles ----------
-  const baseCount = opts.flat ? (opts.tier === 'full' ? 700 : 300) : opts.tier === 'full' ? 4200 : 1400;
+  const baseCount = opts.particles ?? (opts.flat ? (opts.tier === 'full' ? 700 : 300) : opts.tier === 'full' ? 4200 : 1400);
   let count = baseCount;
   const MAX = 6000;
   const px = new Float32Array(MAX), py = new Float32Array(MAX), vx = new Float32Array(MAX), vy = new Float32Array(MAX);
@@ -255,6 +255,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     gl!.uniform4f(uCol, lineRGB[0], lineRGB[1], lineRGB[2], (opts.tier === 'full' ? 0.34 : 0.4) * fade);
     gl!.drawArrays(gl!.LINES, 0, terrainCount);
 
+    if (count === 0) return;
     fillSegments(zs);
     gl!.bindBuffer(gl!.ARRAY_BUFFER, partBuf);
     gl!.bufferSubData(gl!.ARRAY_BUFFER, 0, seg.subarray(0, count * 6));
@@ -283,7 +284,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     // Sustained long frames halve the particles; a sustained fast stretch
     // restores them, so one hitch does not cost the session its detail.
     slow = dt > 1 / 45 ? slow + 1 : slow - 1;
-    if (slow > 90 && count > 600) { count = Math.round(count / 2); slow = 0; }
+    if (slow > 90 && count > 600 && baseCount > 0) { count = Math.round(count / 2); slow = 0; }
     else if (slow < -240 && count < baseCount) { count = Math.min(baseCount, count * 2); slow = 0; }
     raf = requestAnimationFrame(frame);
   }
@@ -314,6 +315,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
       if (!d) return;
       // Recycle particles round-robin (index 0 is the readout's lead).
       for (let j = 0; j < n; j++) {
+        if (count < 2) return;
         cursor = 1 + ((cursor - 1 + 1) % (count - 1));
         const i = cursor; const r = Math.sqrt(Math.random()) * 0.28, t = Math.random() * Math.PI * 2; spawn(i, d.x + r * Math.cos(t), d.y + r * Math.sin(t)); }
     },

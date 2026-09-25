@@ -36,7 +36,7 @@ export function mountClosing(section: HTMLElement) {
   const canvas = section.querySelector<HTMLCanvasElement>('canvas');
   if (!canvas) return;
   const lite = matchMedia('(pointer: coarse)').matches || innerWidth < 760;
-  const gl = createLandscape(canvas, { tier: lite ? 'lite' : 'full', flat: true, staticFrame: reduced() });
+  const gl = createLandscape(canvas, { tier: lite ? 'lite' : 'full', flat: true, staticFrame: reduced(), particles: 0 });
   if (!gl) return;
   gl.setInk([0.969, 0.969, 0.969], 0.8);
   new IntersectionObserver(([e]) => (e.isIntersecting ? gl.start() : gl.stop())).observe(section);

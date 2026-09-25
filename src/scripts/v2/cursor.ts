@@ -6,7 +6,7 @@ export function mountCrosshair() {
   if (!matchMedia('(pointer: fine)').matches) return;
   const root = document.documentElement;
   const el = document.createElement('div');
-  el.className = 'xhair';
+  el.className = 'xhair is-hidden'; // hidden until the mouse first moves
   el.setAttribute('aria-hidden', 'true');
   el.innerHTML = '<span class="xh-h"></span><span class="xh-v"></span><span class="xh-l"></span>';
   document.body.appendChild(el);
@@ -35,7 +35,6 @@ export function mountCrosshair() {
     // Ink follows the section under the pointer: paper on blue and black, black on paper.
     const theme = t.closest<HTMLElement>('[data-theme]')?.dataset.theme;
     el.style.color = theme ? (theme === 'paper' ? '#000' : '#f7f7f7') : '';
-    label.style.background = theme ? (theme === 'paper' ? '#f7f7f7' : theme === 'black' ? '#000' : '#3335ff') : '';
     const field = t.closest('input, textarea, select');
     el.classList.toggle('is-hidden', !!field);
     el.classList.toggle('is-open', !field && !!t.closest('a, button, [role="slider"], input[type="range"], [data-toy-drag]'));

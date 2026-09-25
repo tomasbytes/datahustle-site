@@ -25,7 +25,7 @@ export async function mountClarity(section: HTMLElement) {
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     try { await document.fonts.load('700 100px "Schibsted Grotesk"'); } catch {}
     // Set the word off-screen and sample its ink on a grid.
-    const size = Math.min(W * (W < 760 ? 0.24 : 0.2), H * 0.42);
+    const size = Math.min(W * (W < 760 ? 0.27 : 0.2), H * 0.42);
     const off = document.createElement('canvas');
     off.width = Math.ceil(W); off.height = Math.ceil(H);
     const o = off.getContext('2d')!;

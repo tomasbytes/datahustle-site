@@ -44,7 +44,9 @@ export function mountJourney(section: HTMLElement) {
   function paint() {
     if (reduced) {
       // Static still: the section paints its own gradient. The header stays
-      // blue while the blue hero is under it, then turns paper.
+      // blue while the blue hero is under it; past the journey, the section
+      // themes own the header.
+      if (section.getBoundingClientRect().bottom <= 40) return;
       const onHero = scrollY < innerHeight * 0.55;
       root.style.setProperty('--bg', onHero ? '#3335ff' : '#f7f7f7');
       root.style.setProperty('--fg', onHero ? '#f7f7f7' : '#000000');

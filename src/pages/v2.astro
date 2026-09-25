@@ -211,7 +211,6 @@ const curveD = 'M' + Array.from({ length: 61 }, (_, i) => { const x = 8 + (i / 6
       {FINDINGS.map((f, i) => (
         <li class="report" data-report>
           <button type="button" class="report-head" data-report-toggle aria-expanded="false" aria-controls={`report-${i}`}>
-            <span class="report-i mono">{String(i + 1).padStart(2, '0')}</span>
             <span class="report-t">{f.sector}</span>
             <span class="report-m note">{FINDING_CHARTS[i].label}</span>
             <span class="report-x" aria-hidden="true"></span>
@@ -265,6 +264,9 @@ const curveD = 'M' + Array.from({ length: 61 }, (_, i) => { const x = 8 + (i / 6
     </ul>
     <a class="link" href="/pulse">Read Pulse, our notes <Arrow /></a>
   </section>
+
+  <!-- The ascent back to blue: the brand gradient, reversed, as the approach -->
+  <div class="to-blue" aria-hidden="true"></div>
 
   <!-- MOMENT 6. Closing: back to blue, the landscape now flat. The minimum. -->
   <section class="closing" id="brief" data-closing data-theme="blue" aria-labelledby="brief-title">
