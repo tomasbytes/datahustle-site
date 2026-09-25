@@ -45,16 +45,21 @@ An "Intelligence & Innovation partner" that turns data into measurable business 
 From DataHustle's brand book. These are binding.
 - Tone: authoritative, precise, restrained. Mathematical and geometric logic.
 - Colors: Black #000000 (primary, typography), Off-white #F7F7F7 (background), Brand blue #3335FF (accent only, used selectively). An optional blue-to-off-white gradient, used sparingly.
-- Typeface: Alfabet (Regular, Medium, SemiBold, Bold). The font files are not in the repo yet. Until they are supplied, use a close fallback and flag it to the user.
+- Typeface: Alfabet (Regular, Medium, SemiBold, Bold). The files in `brand/` are Fontspring DEMO versions. They have only 95 characters: no Greek, no curly quotes, no €. They are not licensed for use on a website. A full licensed web version with Greek support is needed before launch. Until then, use a fallback for Greek and flag it.
 - Type scale: Heading 42px Bold / 1.1; Subheading 22px SemiBold / 1.2; Body 16px / 21px; Notes 12px / 16px.
 - Emphasis uses SemiBold weight only, never color.
 - Strict grid. No shadows, no decorative effects.
-- Logo: a wordmark with a structural "interruption" in the H. A secondary mark is used for the favicon.
+- Logo: the primary mark is the "DataHustle" wordmark with ™. "Data" is set in Bold, "Hustle" in a lighter weight, and the H has a structural interruption. The black version is the standard; the white inverse is for dark backgrounds. The secondary mark is the interrupted H alone, used for the favicon, social profiles and small spaces (black, white or blue versions).
+- Meaning of the H interruption: DataHustle enters complex business systems, finds the critical points of intervention, and creates clarity. The identity puts this intelligence into the typography instead of adding decorative elements.
+- The brand blue signals interaction, emphasis and structural intervention. The gradient (blue into off-white) stands for analytical depth converging into clarity. It is used sparingly, for example as a band at the edge of a composition.
+- Typography usage: headings are used sparingly; subheadings structure content without competing with titles; everything aligns to the grid.
+- Brand identity designed by Drop Studio (February 2026).
 
 ## Evidence on Hand
 
 - Client logos: DataHustle has client logos it can show publicly. The files are not in the repo yet.
-- Brand book: the user refers to it at `/brand`, but that folder is not in the repo yet. Logo files (wordmark and secondary mark) and Alfabet font files still need to be supplied.
+- Brand book and assets in `brand/`: `DataHustle_BrandBook.pdf`; wordmark SVGs (`SVG_Primary_Black.svg`, `SVG_Primary_White.svg`) and PNGs; monogram SVGs (black, white, blue) and PNGs; 32px favicons (black, blue, white); gradient SVG, PDF and PNGs; Alfabet demo fonts (see Brand Commitments).
+- Client logo files are still not in the repo.
 - Not available and must not be invented: case studies or published results, testimonials, partner badges or certifications, metrics, or named team members.
 
 ## Product Principles
