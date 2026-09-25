@@ -6,5 +6,6 @@ export default defineConfig({
   site: 'https://datahustle.ai',
   trailingSlash: 'never',
   build: { format: 'file', inlineStylesheets: 'always' },
-  integrations: [sitemap()],
+  // /v2 is a design alternative under review: keep it out of the sitemap.
+  integrations: [sitemap({ filter: (page) => !page.includes('/v2') })],
 });

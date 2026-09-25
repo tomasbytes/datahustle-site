@@ -11,8 +11,10 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   noindex?: boolean;
+  /** 'descent' = the v2 journey: page colours follow --bg / --fg set by script. */
+  variant?: 'descent';
 }
-const { title, description = SITE.description, image = '/og.png', type = 'website', noindex = false } = Astro.props;
+const { title, description = SITE.description, image = '/og.png', type = 'website', noindex = false, variant } = Astro.props;
 const fullTitle = title ? `${title} | DataHustle` : 'DataHustle | Intelligence & Innovation partner';
 // Clean URLs (Netlify serves /services for services.html): match the sitemap.
 const cleanPath = Astro.url.pathname.replace(/(index)?\.html$/, '').replace(/(.)\/$/, '$1') || '/';
@@ -22,7 +24,7 @@ const ogImage = new URL(image, Astro.site);
 const gtmId = import.meta.env.PUBLIC_DISABLE_GTM ? '' : 'GTM-5MRKTKKR';
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" class={variant === 'descent' ? 'descent on-blue' : undefined}>
   <head>
     <meta charset="utf-8" />
     <script is:inline>document.documentElement.classList.add('js');</script>
