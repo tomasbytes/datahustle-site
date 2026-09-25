@@ -4,8 +4,9 @@ const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
-// How we work: vertical scroll drives a horizontal track; the path steps
-// down to each k and lights it as its panel reaches the centre.
+// How we work: vertical scroll drives a horizontal track across a black
+// field. The descent path returns as one large paper line; k = 1…4 sit on it
+// and light up as their panel reaches the centre (the current one in blue).
 export function mountMethod(section: HTMLElement) {
   const pin = section.querySelector<HTMLElement>('[data-pin]')!;
   const track = section.querySelector<HTMLElement>('[data-track]')!;
@@ -14,27 +15,25 @@ export function mountMethod(section: HTMLElement) {
   const panels = [...section.querySelectorAll<HTMLElement>('[data-panel]')];
   const wide = matchMedia('(min-width: 60.01rem)');
   let len = 0;
+  // The path: steep at first, flattening toward the minimum, like the hero's.
+  const yOf = (u: number) => 0.2 + 0.4 * (1 - Math.exp(-2.6 * Math.max(0, u - 0.04)));
 
   function size() {
-    if (!wide.matches || reduced()) { section.style.height = ''; track.style.transform = ''; update(); return; }
+    if (!wide.matches || reduced()) { section.style.height = ''; track.style.transform = ''; panels.forEach((p) => p.style.removeProperty('--py')); update(); return; }
     const extra = track.scrollWidth - innerWidth;
     section.style.height = `${pin.offsetHeight + Math.max(0, extra)}px`;
-    // Draw the staircase in real pixels so the dash-based draw-in is exact:
-    // step k lands at x = 20·k % of the track, y = 30 % + 10 %·(k − 1).
     if (path) {
       const w = track.scrollWidth, h = track.offsetHeight;
       const svg = path.ownerSVGElement!;
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       svg.setAttribute('preserveAspectRatio', 'none');
-      // Start just before step 1, clear of the intro copy.
-      let d = `M ${(0.2 * w - 56).toFixed(1)} ${(0.3 * h).toFixed(1)}`;
-      for (let i = 0; i < 4; i++) d += ` H ${(0.2 * (i + 1) * w).toFixed(1)} V ${((0.3 + 0.1 * i) * h).toFixed(1)}`;
-      d = d.replace(/^(M [\d.]+ [\d.]+) H ([\d.]+) V [\d.]+/, '$1 H $2');
-      d += ` H ${w}`;
+      let d = '';
+      for (let i = 0; i <= 160; i++) { const u = i / 160; d += `${i ? 'L' : 'M'}${(u * w).toFixed(1)},${(yOf(u) * h).toFixed(1)}`; }
       path.setAttribute('d', d);
+      panels.forEach((p, i) => p.style.setProperty('--py', `${(yOf(0.2 * (i + 1)) * h).toFixed(1)}px`));
     }
     len = path?.getTotalLength() || 0;
-    if (path) { path.style.strokeDasharray = `${len}`; }
+    if (path) path.style.strokeDasharray = `${len}`;
     update();
   }
   function update() {
@@ -49,11 +48,10 @@ export function mountMethod(section: HTMLElement) {
     const p = clamp(-r.top / Math.max(1, travel));
     const extra = track.scrollWidth - innerWidth;
     track.style.transform = `translate3d(${(-p * extra).toFixed(1)}px, 0, 0)`;
-    if (path) path.style.strokeDashoffset = String(len * (1 - clamp(p * 1.08)));
+    if (path) path.style.strokeDashoffset = String(len * (1 - clamp(0.22 + p * 0.9)));
     let current: HTMLElement | null = null;
     panels.forEach((panel, i) => {
-      const pr = panel.getBoundingClientRect();
-      const on = pr.left < innerWidth * 0.62;
+      const on = panel.getBoundingClientRect().left < innerWidth * 0.62;
       panel.classList.toggle('is-on', on);
       points[i]?.classList.toggle('is-lit', on);
       if (on) current = points[i];

@@ -76,7 +76,10 @@ void main() {
 // World coordinates: x → x, height → y (up), domain y → −z.
 const W = (x: number, y: number, h: number): [number, number, number] => [x, h * HEIGHT, -y];
 
-export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; staticFrame?: boolean }) {
+// `flat`: the closing view. The same landscape, optimised almost flat, with a
+// few calm particles and a slow fixed orbit.
+export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; staticFrame?: boolean; flat?: boolean }) {
+  const FLAT = opts.flat ? 0.14 : 1;
   const gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'high-performance' });
   if (!gl) return null;
 
@@ -116,7 +119,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
   const terrainCount = terrain.length / 3;
 
   // ---------- particles ----------
-  const baseCount = opts.tier === 'full' ? 4200 : 1400;
+  const baseCount = opts.flat ? (opts.tier === 'full' ? 700 : 300) : opts.tier === 'full' ? 4200 : 1400;
   let count = baseCount;
   const MAX = 6000;
   const px = new Float32Array(MAX), py = new Float32Array(MAX), vx = new Float32Array(MAX), vy = new Float32Array(MAX);
@@ -147,6 +150,15 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
   function camera() {
+    if (opts.flat) {
+      const az = 0.5 + time * 0.012, dist = 7.6, elev = (24 * Math.PI) / 180;
+      eye = [dist * Math.cos(elev) * Math.sin(az), -0.2 + dist * Math.sin(elev), dist * Math.cos(elev) * Math.cos(az)];
+      perspective(proj, FOV, width / height, 0.05, 40);
+      lookAt(view, eye, [0, -0.2, 0]);
+      mul(vp, proj, view);
+      invert(inv, vp);
+      return dist;
+    }
     // From a high overview slowly orbiting, down into the global basin.
     const p = ease(Math.min(1, Math.max(0, (progress - 0.04) / 0.9)));
     const az = 0.62 + time * 0.018 * (1 - p) + p * 0.35;
@@ -182,7 +194,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
   }
 
   function step(dt: number) {
-    const eta = 0.55, noise = 0.05 * Math.sqrt(dt);
+    const eta = opts.flat ? 0.28 : 0.55, noise = 0.05 * Math.sqrt(dt);
     const R = 0.75, push = 2.2;
     for (let i = 0; i < count; i++) {
       let x = px[i], y = py[i];
@@ -231,7 +243,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     gl!.viewport(0, 0, canvas.width, canvas.height);
     gl!.clearColor(0, 0, 0, 0);
     gl!.clear(gl!.COLOR_BUFFER_BIT);
-    const zs = (lastZs = 1 + 0.045 * Math.sin(time * 0.7)); // breathing
+    const zs = (lastZs = (1 + 0.045 * Math.sin(time * 0.7)) * FLAT); // breathing
     gl!.uniformMatrix4fv(uMvp, false, vp);
     gl!.uniform1f(uZs, zs);
     gl!.uniform3fv(uEye, eye);

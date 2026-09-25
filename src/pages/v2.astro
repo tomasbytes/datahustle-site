@@ -1,7 +1,8 @@
 ---
 // v2: "The Descent". The page performs a gradient descent: it opens inside a
-// live loss landscape in brand blue and scrolls down the brand gradient to
-// off-white clarity, where the proof and the brief live.
+// live loss landscape in brand blue, descends to off-white clarity, and keeps
+// its energy with a rhythm of big moments (pinned, full-bleed) and calm
+// sections, ending back on the landscape, now flat: the minimum.
 import Base from '../layouts/Base.astro';
 import Arrow from '../components/Arrow.astro';
 import Figure from '../components/Figure.astro';
@@ -9,43 +10,45 @@ import '../styles/v2.css';
 import { SERVICES, STEPS, CLIENTS, FINDINGS, FOUNDERS } from '../data/site.js';
 import { readFileSync } from 'node:fs';
 
-const LOGO_AREA = 5000;
+const LOGO_AREA = 5200;
 const logos = CLIENTS.map((c) => {
   const png = readFileSync(`public/clients/${c.file}.png`);
   const w = png.readUInt32BE(16), h = png.readUInt32BE(20);
-  const width = Math.min(Math.round(Math.sqrt(LOGO_AREA * (w / h))), 165);
+  const width = Math.min(Math.round(Math.sqrt(LOGO_AREA * (w / h))), 170);
   return { ...c, width, height: Math.round((width * h) / w) };
 });
-const svc = Object.fromEntries(SERVICES.map((s) => [s.id, s]));
+const rowA = logos.filter((_, i) => i % 2 === 0), rowB = logos.filter((_, i) => i % 2 === 1);
+const svc = SERVICES;
 const FINDING_CHARTS = [
   { trend: 'up', label: 'Revenue index' },
   { trend: 'down', label: 'Cost per acquisition' },
   { trend: 'error', label: 'Forecast error' },
 ] as const;
+const STATS = [
+  { n: 12, suffix: '', label: 'Years working in data and performance' },
+  { n: 140, suffix: '+', label: 'Projects delivered' },
+  { n: 9, suffix: '', label: 'Markets served' },
+];
+const FOCUS = ['Measurement', 'Modelling', 'Media', 'Strategy'];
+const FOCUS_VALUES = [[0.9, 0.95, 0.5, 0.7], [0.6, 0.5, 0.85, 0.9]]; // placeholders [TO CONFIRM]
 
 // Contact brief: stops along a small descent curve, k = 0…4, then the minimum.
 const curve = (x: number) => 118 - 98 * ((x - 150) / 136) ** 2;
 const stops = [14, 40, 66, 92, 118, 150].map((x) => [x, +curve(x).toFixed(1)]);
 const curveD = 'M' + Array.from({ length: 61 }, (_, i) => { const x = 8 + (i / 60) * 184; return `${x.toFixed(1)},${curve(x).toFixed(1)}`; }).join('L');
-
-// Method path: a staircase across five equal panels (intro + k = 1…4). Step
-// k lands at x = 20·k % of the track and y = 30 % + 10 %·(k−1) of its height.
-const methodPath = 'M 0 40 ' + [0, 1, 2, 3].map((i) => `H ${20 * (i + 1)} V ${60 + 20 * i}`).join(' ') + ' H 100';
 ---
 <Base title="The Descent" variant="descent" noindex description="DataHustle: growth is an optimization problem. We find the path.">
-  <!-- 1. The descent: a pinned stage, the camera moves into the landscape -->
+  <!-- MOMENT 1. The descent: a pinned stage, the camera moves into the landscape -->
   <section class="journey" data-journey aria-label="Introduction">
     <div class="stage" data-stage>
       <canvas class="terrain" aria-hidden="true"></canvas>
       <span class="min-mark" data-min-mark aria-hidden="true"></span>
-
       <div class="readout mono" aria-hidden="true">
         <p><span>k</span><span data-r-k>00000</span></p>
         <p><span>f(x)</span><span data-r-f> 0.0000</span></p>
         <p><span>|∇f|</span><span data-r-g>0.0000</span></p>
         <p><span>n</span><span data-r-n>0</span></p>
       </div>
-
       <div class="wrap beats">
         <div class="beat beat-hero" data-beat="-1,0.2">
           <h1><span>Growth is an optimization problem.</span> <span>We find the path.</span></h1>
@@ -55,104 +58,109 @@ const methodPath = 'M 0 40 ' + [0, 1, 2, 3].map((i) => `H ${20 * (i + 1)} V ${60
           </div>
           <p class="note hint">Every short stroke is a particle following the real gradient downhill. Move to push them. Click to drop more.</p>
         </div>
-        <p class="beat beat-say" data-beat="0.22,0.4">Most companies do not lack data. They lack a structure that turns it into decisions.</p>
-        <p class="beat beat-say beat-dark" data-beat="0.64,0.82">We map the system, find the few points where a change moves revenue, and build only what is needed to act on them.</p>
-        <div class="beat beat-min" data-beat="0.87,1.01">
-          <p class="clarity">Clarity.</p>
-          <p class="sub">Not AI as a trend. Clarity as a system.</p>
-        </div>
+        <p class="beat beat-say" data-beat="0.22,0.42">Most companies do not lack data. They lack a structure that turns it into decisions.</p>
+        <p class="beat beat-say beat-dark" data-beat="0.64,0.9">We map the system, find the few points where a change moves revenue, and build only what is needed to act on them.</p>
       </div>
       <p class="scroll-cue note" data-beat="-1,0.08" aria-hidden="true">Scroll to descend</p>
     </div>
   </section>
 
-  <div class="hcut" data-reveal aria-hidden="true"><span></span></div>
-
-  <!-- 2. Services: one instrument per discipline -->
-  <section class="wrap v2-section" id="services" aria-labelledby="services-title">
-    <header class="sec-head">
-      <h2 id="services-title" class="h">Four disciplines, one system.</h2>
-      <p class="muted">Each one below is live. Move the variable that matters.</p>
-    </header>
-
-    <article class="toy" data-toy="signal">
-      <div class="toy-plot" data-plot></div>
-      <div class="toy-text">
-        <h3 class="sub">{svc.measurement.title}</h3>
-        <p class="question">{svc.measurement.question}</p>
-        <p>{svc.measurement.summary}</p>
-        <label class="ctl">
-          <span class="note">Signal / noise</span>
-          <input type="range" min="0" max="100" value="10" aria-label="Signal to noise" />
-        </label>
-        <p class="mono readline" data-out></p>
-        <a class="link" href="/services#measurement">Measurement architecture <Arrow /></a>
+  <!-- MOMENT 2. Clarity: particles converge into the word -->
+  <section class="clarity" data-clarity data-theme="paper" aria-labelledby="clarity-title">
+    <div class="clarity-stage" data-stage>
+      <canvas aria-hidden="true"></canvas>
+      <h2 id="clarity-title" class="visually-hidden">Clarity.</h2>
+      <div class="wrap clarity-sub" data-sub>
+        <p class="sub">Not AI as a trend. Clarity as a system.</p>
       </div>
-    </article>
-
-    <article class="toy toy-flip" data-toy="network">
-      <div class="toy-plot" data-plot></div>
-      <div class="toy-text">
-        <h3 class="sub">{svc['ai-data'].title}</h3>
-        <p class="question">{svc['ai-data'].question}</p>
-        <p>{svc['ai-data'].summary}</p>
-        <p class="mono readline">ŷ = <span data-val data-v="0.5">0.500</span></p>
-        <p class="note muted" data-out></p>
-        <a class="link" href="/services#ai-data">AI & data solutions <Arrow /></a>
-      </div>
-    </article>
-
-    <article class="toy" data-toy="budget">
-      <div class="toy-plot" data-plot></div>
-      <div class="toy-text">
-        <h3 class="sub">{svc['performance-media'].title}</h3>
-        <p class="question">{svc['performance-media'].question}</p>
-        <div class="budget">
-          {['Search', 'Social', 'Display'].map((n, i) => (
-            <label class="ctl ctl-row">
-              <span class="note">{n}</span>
-              <input type="range" min="0" max="100" value={[70, 20, 30][i]} aria-label={`${n} spend`} />
-              <span class="mono" data-spend>{[70, 20, 30][i]}</span>
-            </label>
-          ))}
-        </div>
-        <p class="mono readline">return <span data-total data-v="0">0</span> · optimal <span data-best data-v="0">0</span></p>
-        <p class="note muted" data-gap></p>
-        <button type="button" class="button ghost small" data-apply>Move to the optimum</button>
-        <p class="note muted">Illustrative response curves [TO CONFIRM]</p>
-      </div>
-    </article>
-
-    <article class="toy toy-flip" data-toy="pareto">
-      <div class="toy-plot" data-plot></div>
-      <div class="toy-text">
-        <h3 class="sub">{svc.strategy.title}</h3>
-        <p class="question">{svc.strategy.question}</p>
-        <p>{svc.strategy.summary}</p>
-        <p class="note muted">Drag across the chart, or use the arrow keys. The choice snaps to the frontier.</p>
-        <p class="mono readline" data-out></p>
-        <a class="link" href="/services#strategy">Strategy consulting <Arrow /></a>
-      </div>
-    </article>
+    </div>
   </section>
 
-  <div class="hcut" data-reveal aria-hidden="true"><span></span></div>
+  <!-- MOMENT 3. Four disciplines, one morphing visual -->
+  <section class="disciplines" data-morph data-theme="paper" aria-labelledby="disc-title">
+    <div class="disc-pin" data-pin>
+      <div class="wrap disc-grid">
+        <div class="disc-margin" aria-hidden="true">
+          {[0, 1, 2, 3].map((i) => <span class="disc-num" data-num>{String(i + 1).padStart(2, '0')}</span>)}
+          <span class="disc-count mono">/ 04</span>
+        </div>
+        <div class="disc-visual" data-visual></div>
+        <div class="disc-text">
+          <h2 id="disc-title" class="visually-hidden">Four disciplines, one system</h2>
+          {svc.map((s, i) => (
+            <article class="chapter" data-chapter>
+              <h3 class="chapter-h">{s.title}</h3>
+              <p class="question">{s.question}</p>
+              <p>{s.summary}</p>
+              {i === 0 && (
+                <label class="ctl"><span class="note">Signal / noise</span><input type="range" min="0" max="100" value="10" data-noise aria-label="Signal to noise" /></label>
+              )}
+              {i === 0 && <p class="mono readline" data-out="noise"></p>}
+              {i === 1 && <p class="mono readline" data-out="net"></p>}
+              {i === 2 && (
+                <div class="budget">
+                  {['Search', 'Social', 'Display'].map((n, k) => (
+                    <label class="ctl ctl-row"><span class="note">{n}</span><input type="range" min="0" max="100" value={[70, 20, 30][k]} data-spend-in aria-label={`${n} spend`} /></label>
+                  ))}
+                  <p class="mono readline" data-out="budget"></p>
+                  <button type="button" class="button ghost small" data-apply>Move to the optimum</button>
+                  <p class="note muted">Illustrative response curves [TO CONFIRM]</p>
+                </div>
+              )}
+              {i === 3 && <p class="note muted">Drag across the chart, or use the arrow keys. The choice snaps to the frontier.</p>}
+              {i === 3 && <p class="mono readline" data-out="pareto"></p>}
+              <a class="link" href={`/services#${s.id}`}>More on {s.title.toLowerCase()} <Arrow /></a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- 3. How we work: horizontal track -->
-  <section class="method" data-method aria-labelledby="method-title">
+  <!-- Narrow screens and reduced motion: the same visual, one chapter at a time -->
+  <section class="disc-stacked wrap" data-theme="paper" aria-label="Four disciplines">
+    {svc.map((s, i) => (
+      <article class="stack-ch" data-morph-fixed={i}>
+        <p class="disc-num-s" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+        <div class="disc-visual" data-visual></div>
+        <div class="chapter">
+          <h3 class="chapter-h">{s.title}</h3>
+          <p class="question">{s.question}</p>
+          <p>{s.summary}</p>
+          {i === 0 && <label class="ctl"><span class="note">Signal / noise</span><input type="range" min="0" max="100" value="10" data-noise aria-label="Signal to noise" /></label>}
+          {i === 0 && <p class="mono readline" data-out="noise"></p>}
+          {i === 1 && <p class="mono readline" data-out="net"></p>}
+          {i === 2 && (
+            <div class="budget">
+              {['Search', 'Social', 'Display'].map((n, k) => (
+                <label class="ctl ctl-row"><span class="note">{n}</span><input type="range" min="0" max="100" value={[70, 20, 30][k]} data-spend-in aria-label={`${n} spend`} /></label>
+              ))}
+              <p class="mono readline" data-out="budget"></p>
+              <button type="button" class="button ghost small" data-apply>Move to the optimum</button>
+            </div>
+          )}
+          {i === 3 && <p class="mono readline" data-out="pareto"></p>}
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <!-- MOMENT 4. How we work: black, horizontal, the descent path returns -->
+  <section class="method" data-method data-theme="black" aria-labelledby="method-title">
     <div class="method-pin" data-pin>
       <div class="method-track" data-track>
-        <svg class="method-path" viewBox="0 0 100 200" preserveAspectRatio="none" aria-hidden="true"><path data-path d={methodPath} /></svg>
+        <svg class="method-path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path data-path d="M0 20 L100 60" /></svg>
         <div class="m-panel m-intro">
-          <h2 id="method-title" class="h">How we work: one step at a time.</h2>
-          <p class="muted">Each engagement repeats the same loop until the gains flatten. [TO CONFIRM] Step names and wording.</p>
+          <h2 id="method-title" class="m-title">How we work</h2>
+          <p>One step at a time. Each engagement repeats the same loop until the gains flatten.</p>
+          <p class="note m-tbc">[TO CONFIRM] Step names and wording.</p>
         </div>
         {STEPS.map((s, i) => (
           <div class="m-panel" data-panel style={`--i:${i}`}>
             <span class="m-point" data-k aria-hidden="true"></span>
             <span class="m-k" aria-hidden="true"><i>k</i> = {i + 1}</span>
             <span class="m-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="sub">{s.title}</h3>
+            <h3 class="m-step">{s.title}</h3>
             <p>{s.text}</p>
           </div>
         ))}
@@ -160,110 +168,149 @@ const methodPath = 'M 0 40 ' + [0, 1, 2, 3].map((i) => `H ${20 * (i + 1)} V ${60
     </div>
   </section>
 
-  <div class="hcut" data-reveal aria-hidden="true"><span></span></div>
-
-  <!-- 4. Clients: constellation into grid -->
-  <section class="wrap v2-section" data-constellation aria-labelledby="clients-title">
-    <ul class="clients">
-      <li class="clients-head"><h2 id="clients-title" class="h">Selected clients</h2></li>
-      {logos.map((c) => (
-        <li class="logo" data-logo>
-          <span class="star" aria-hidden="true"></span>
-          <img src={`/clients/${c.file}.png`} alt={c.name} width={c.width} height={c.height} decoding="async" />
-        </li>
+  <!-- MOMENT 5. Proof band: blue, huge numbers -->
+  <section class="stats" data-stats data-theme="blue" aria-label="DataHustle in numbers">
+    <div class="wrap stats-grid">
+      {STATS.map((st) => (
+        <div class="stat">
+          <p class="stat-n"><span data-count={st.n}>{st.n}</span>{st.suffix}</p>
+          <p class="stat-l">{st.label}</p>
+        </div>
       ))}
-    </ul>
-    <svg class="links" data-lines aria-hidden="true"><path /></svg>
+      <p class="note stats-tbc">All figures are placeholders [TO CONFIRM].</p>
+    </div>
+  </section>
+
+  <!-- CALM. Clients: a slow two-row marquee -->
+  <section class="clients-m" data-theme="paper" aria-labelledby="clients-title">
+    <div class="wrap"><h2 id="clients-title" class="h">Selected clients</h2></div>
+    <div class="marquee" aria-hidden="false">
+      {[rowA, rowB].map((row, r) => (
+        <div class={`mq-row ${r ? 'mq-rev' : ''}`}>
+          <ul class="mq-track">
+            {[...row, ...row, ...row, ...row].map((c, k) => (
+              <li class="mq-logo" aria-hidden={k >= row.length ? 'true' : undefined}>
+                <img src={`/clients/${c.file}.png`} alt={k < row.length ? c.name : ''} width={c.width} height={c.height} decoding="async" loading="lazy" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
   </section>
 
   <div class="hcut" data-reveal aria-hidden="true"><span></span></div>
 
-  <!-- 5. Findings -->
-  <section class="wrap v2-section" aria-labelledby="findings-title">
+  <!-- CALM. Findings: cards that open like reports -->
+  <section class="wrap v2-section" data-reports data-theme="paper" aria-labelledby="findings-title">
     <header class="sec-head">
       <h2 id="findings-title" class="h">Findings</h2>
       <p class="muted">Selected engagements. Client names withheld.</p>
     </header>
-    <ol class="findings">
+    <ol class="reports">
       {FINDINGS.map((f, i) => (
-        <li class="finding">
-          <Figure kind="finding" trend={FINDING_CHARTS[i].trend} label={FINDING_CHARTS[i].label} seed={31 + i * 17}>
-            <figcaption class="chart-cap note">
-              <span>{FINDING_CHARTS[i].label}, 24 months</span>
-              <span class="muted">Illustrative data [TO CONFIRM]</span>
-            </figcaption>
-          </Figure>
-          <p class="sub">{f.sector}</p>
-          <dl>
-            <div><dt class="note muted">Challenge</dt><dd>{f.challenge}</dd></div>
-            <div><dt class="note muted">Intervention</dt><dd>{f.intervention}</dd></div>
-            <div><dt class="note muted">Outcome</dt><dd>{f.outcome}</dd></div>
-          </dl>
+        <li class="report" data-report>
+          <button type="button" class="report-head" data-report-toggle aria-expanded="false" aria-controls={`report-${i}`}>
+            <span class="report-i mono">{String(i + 1).padStart(2, '0')}</span>
+            <span class="report-t">{f.sector}</span>
+            <span class="report-m note">{FINDING_CHARTS[i].label}</span>
+            <span class="report-x" aria-hidden="true"></span>
+          </button>
+          <div class="report-body" id={`report-${i}`}>
+            <div class="report-inner">
+              <Figure kind="finding" wide trend={FINDING_CHARTS[i].trend} label={FINDING_CHARTS[i].label} seed={31 + i * 17}>
+                <figcaption class="chart-cap note">
+                  <span>{FINDING_CHARTS[i].label}, 24 months</span>
+                  <span class="muted">Illustrative data [TO CONFIRM]</span>
+                </figcaption>
+              </Figure>
+              <dl class="report-dl">
+                <div><dt class="note muted">Challenge</dt><dd>{f.challenge}</dd></div>
+                <div><dt class="note muted">Intervention</dt><dd>{f.intervention}</dd></div>
+                <div><dt class="note muted">Outcome</dt><dd>{f.outcome}</dd></div>
+              </dl>
+            </div>
+          </div>
         </li>
       ))}
     </ol>
   </section>
 
-  <section class="wrap v2-section people" aria-labelledby="people-title">
+  <div class="hcut" data-reveal aria-hidden="true"><span></span></div>
+
+  <!-- CALM. Founders: big names; hover draws each one's focus -->
+  <section class="wrap v2-section founders" data-theme="paper" aria-labelledby="people-title">
     <h2 id="people-title" class="h">The people you work with.</h2>
     <ul>
-      {FOUNDERS.map((p) => (
-        <li>
-          <h3 class="sub">{p.name}</h3>
-          <p class="muted">{p.title}</p>
-          <p>{p.credentials}</p>
-          <p class="muted">{p.focus}</p>
+      {FOUNDERS.map((p, i) => (
+        <li class="founder" tabindex="0">
+          <p class="founder-name">{p.name}</p>
+          <div class="founder-meta">
+            <p class="muted">{p.title}</p>
+            <p>{p.credentials}</p>
+            <p class="muted">{p.focus}</p>
+          </div>
+          <svg class="focus" viewBox="0 0 260 120" role="img" aria-label={`Focus areas for ${p.name} (placeholder)`}>
+            {FOCUS.map((a, k) => (
+              <g>
+                <text x="0" y={18 + k * 26} class="f-lbl">{a}</text>
+                <line x1="92" x2="252" y1={14 + k * 26} y2={14 + k * 26} class="f-track" />
+                <line x1="92" x2={92 + 160 * FOCUS_VALUES[i][k]} y1={14 + k * 26} y2={14 + k * 26} class="f-bar" pathLength="1" style={`--k:${k}`} />
+              </g>
+            ))}
+            <text x="0" y="116" class="f-tbc">Focus areas, placeholder [TO CONFIRM]</text>
+          </svg>
         </li>
       ))}
     </ul>
     <a class="link" href="/pulse">Read Pulse, our notes <Arrow /></a>
   </section>
 
-  <div class="hcut" data-reveal aria-hidden="true"><span></span></div>
-
-  <!-- 6. The brief: the form descends to its minimum -->
-  <section class="wrap v2-section brief" id="brief" data-brief data-stops={JSON.stringify(stops)} aria-labelledby="brief-title">
-    <div class="brief-side">
-      <h2 id="brief-title" class="h">Start with one conversation.</h2>
-      <p>Four fields. Each one you complete takes a step down. Send it, and we reply within two working days with a proposed agenda. <span class="muted">[TO CONFIRM]</span></p>
-      <svg class="brief-curve" viewBox="0 0 200 140" aria-hidden="true">
-        <path class="bc-line" d={curveD} />
-        {stops.slice(0, 5).map(([x, y]) => <circle class="bc-stop" cx={x} cy={y} r="2" />)}
-        <rect class="bc-min" x={stops[5][0] - 5} y={stops[5][1] - 5} width="10" height="10" />
-        <g data-dot class="bc-dot" style={`transform: translate(${stops[0][0]}px, ${stops[0][1]}px)`}><circle r="5" /></g>
-      </svg>
-      <p class="mono note" data-k-out>k = 0</p>
-    </div>
-
-    <div class="brief-form">
-      <form name="strategy-session" method="POST" action="/v2?sent=1#brief" data-netlify="true" netlify-honeypot="company-website" novalidate>
-        <input type="hidden" name="form-name" value="strategy-session" />
-        <p class="hp" aria-hidden="true"><label>Leave this empty <input name="company-website" tabindex="-1" autocomplete="off" /></label></p>
-        {[
-          { id: 'name', label: 'Your name', type: 'text', ac: 'name', err: 'Enter your name.' },
-          { id: 'company', label: 'Company', type: 'text', ac: 'organization', err: 'Enter your company.' },
-          { id: 'email', label: 'Work email', type: 'email', ac: 'email', err: 'Enter an email address like name@company.com.' },
-        ].map((f, i) => (
+  <!-- MOMENT 6. Closing: back to blue, the landscape now flat. The minimum. -->
+  <section class="closing" id="brief" data-closing data-theme="blue" aria-labelledby="brief-title">
+    <canvas class="closing-terrain" aria-hidden="true"></canvas>
+    <div class="wrap closing-grid brief" data-brief data-stops={JSON.stringify(stops)}>
+      <div class="brief-side">
+        <h2 id="brief-title" class="closing-title">Start with one conversation.</h2>
+        <p>Four fields. Each one you complete takes a step down. Send it, and we reply within two working days with a proposed agenda. <span class="tbc">[TO CONFIRM]</span></p>
+        <svg class="brief-curve" viewBox="0 0 200 140" aria-hidden="true">
+          <path class="bc-line" d={curveD} />
+          {stops.slice(0, 5).map(([x, y]) => <circle class="bc-stop" cx={x} cy={y} r="2" />)}
+          <rect class="bc-min" x={stops[5][0] - 5} y={stops[5][1] - 5} width="10" height="10" />
+          <g data-dot class="bc-dot" style={`transform: translate(${stops[0][0]}px, ${stops[0][1]}px)`}><circle r="5" /></g>
+        </svg>
+        <p class="mono note" data-k-out>k = 0</p>
+      </div>
+      <div class="brief-form">
+        <form name="strategy-session" method="POST" action="/v2?sent=1#brief" data-netlify="true" netlify-honeypot="company-website" novalidate>
+          <input type="hidden" name="form-name" value="strategy-session" />
+          <p class="hp" aria-hidden="true"><label>Leave this empty <input name="company-website" tabindex="-1" autocomplete="off" /></label></p>
+          {[
+            { id: 'name', label: 'Your name', type: 'text', ac: 'name', err: 'Enter your name.' },
+            { id: 'company', label: 'Company', type: 'text', ac: 'organization', err: 'Enter your company.' },
+            { id: 'email', label: 'Work email', type: 'email', ac: 'email', err: 'Enter an email address like name@company.com.' },
+          ].map((f, i) => (
+            <div class="field">
+              <label for={`b-${f.id}`}><span class="num mono">0{i + 1}</span>{f.label}</label>
+              <input id={`b-${f.id}`} name={f.id} type={f.type} autocomplete={f.ac} required maxlength="200" />
+              <p class="error note" data-error hidden>{f.err}</p>
+            </div>
+          ))}
           <div class="field">
-            <label for={`b-${f.id}`}><span class="num mono">0{i + 1}</span>{f.label}</label>
-            <input id={`b-${f.id}`} name={f.id} type={f.type} autocomplete={f.ac} required maxlength="200" />
-            <p class="error note" data-error hidden>{f.err}</p>
+            <label for="b-challenge"><span class="num mono">04</span>What's your challenge?</label>
+            <textarea id="b-challenge" name="challenge" rows="4" required maxlength="1000"></textarea>
+            <p class="error note" data-error hidden>Tell us briefly what you would like to solve.</p>
           </div>
-        ))}
-        <div class="field">
-          <label for="b-challenge"><span class="num mono">04</span>What's your challenge?</label>
-          <textarea id="b-challenge" name="challenge" rows="4" required maxlength="1000"></textarea>
-          <p class="error note" data-error hidden>Tell us briefly what you would like to solve.</p>
+          <div class="submit">
+            <button class="button invert" type="submit"><span data-label>Send the brief</span> <Arrow class="btn-arrow" /></button>
+            <p class="note">We use your details only to reply to this request.</p>
+          </div>
+          <p class="form-error" role="alert" data-form-error hidden>The brief did not go through. Check your connection and try again, or email us at hello@datahustle.ai.</p>
+        </form>
+        <div class="sent" data-sent hidden tabindex="-1">
+          <p class="closing-title">Minimum reached.</p>
+          <p>Thank you. We will reply within two working days with a proposed agenda. [TO CONFIRM]</p>
         </div>
-        <div class="submit">
-          <button class="button" type="submit"><span data-label>Send the brief</span> <Arrow class="btn-arrow" /></button>
-          <p class="note muted">We use your details only to reply to this request.</p>
-        </div>
-        <p class="form-error" role="alert" data-form-error hidden>The brief did not go through. Check your connection and try again, or email us at hello@datahustle.ai.</p>
-      </form>
-      <div class="sent" data-sent hidden tabindex="-1">
-        <h3 class="h">Minimum reached.</h3>
-        <p>Thank you. We will reply within two working days with a proposed agenda. [TO CONFIRM]</p>
       </div>
     </div>
   </section>
@@ -272,18 +319,23 @@ const methodPath = 'M 0 40 ' + [0, 1, 2, 3].map((i) => `H ${20 * (i + 1)} V ${60
 <script>
   import { mountJourney } from '../scripts/v2/journey';
   import { mountCrosshair } from '../scripts/v2/cursor';
-  import { mountToys } from '../scripts/v2/toys';
-  import { mountMethod, mountConstellation, mountReveals } from '../scripts/v2/sections';
+  import { mountClarity } from '../scripts/v2/clarity';
+  import { mountMorph } from '../scripts/v2/morph';
+  import { mountMethod, mountReveals } from '../scripts/v2/sections';
+  import { mountStats, mountReports, mountClosing, mountThemes } from '../scripts/v2/moments';
   import { mountBrief } from '../scripts/v2/brief';
-  const j = document.querySelector<HTMLElement>('[data-journey]');
+  const q = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s) as unknown as HTMLElement | null;
+  const j = q('[data-journey]');
   if (j) mountJourney(j);
   mountCrosshair();
-  mountToys();
-  const m = document.querySelector<HTMLElement>('[data-method]');
-  if (m) mountMethod(m);
-  const c = document.querySelector<HTMLElement>('[data-constellation]');
-  if (c) mountConstellation(c);
+  const c = q('[data-clarity]'); if (c) mountClarity(c);
+  const m = q('[data-morph]'); if (m) mountMorph(m);
+  document.querySelectorAll<HTMLElement>('[data-morph-fixed]').forEach((el) => mountMorph(el, { fixedChapter: +el.dataset.morphFixed! }));
+  const me = q('[data-method]'); if (me) mountMethod(me);
+  const st = q('[data-stats]'); if (st) mountStats(st);
+  const rp = q('[data-reports]'); if (rp) mountReports(rp);
+  const cl = q('[data-closing]'); if (cl) mountClosing(cl);
   mountReveals();
-  const b = document.querySelector<HTMLElement>('[data-brief]');
-  if (b) mountBrief(b);
+  const b = q('[data-brief]'); if (b) mountBrief(b);
+  mountThemes(j);
 </script>

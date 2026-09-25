@@ -32,6 +32,10 @@ export function mountCrosshair() {
     el.classList.toggle('flip-x', e.clientX > innerWidth - 190);
     el.classList.toggle('flip-y', e.clientY > innerHeight - 40);
     const t = e.target as HTMLElement;
+    // Ink follows the section under the pointer: paper on blue and black, black on paper.
+    const theme = t.closest<HTMLElement>('[data-theme]')?.dataset.theme;
+    el.style.color = theme ? (theme === 'paper' ? '#000' : '#f7f7f7') : '';
+    label.style.background = theme ? (theme === 'paper' ? '#f7f7f7' : theme === 'black' ? '#000' : '#3335ff') : '';
     const field = t.closest('input, textarea, select');
     el.classList.toggle('is-hidden', !!field);
     el.classList.toggle('is-open', !field && !!t.closest('a, button, [role="slider"], input[type="range"], [data-toy-drag]'));
