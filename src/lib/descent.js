@@ -1,65 +1,51 @@
-// Gradient descent on a curved valley, computed at build time.
-// f(x, y) = A·(y − B·x²)² + C·(x − X0)² + D·(y − Y0)²
-// A banana-shaped valley: steepest descent drops into the valley first,
-// then bends along it toward the minimum, so the path curves visibly.
+// Build-time geometry for the hero: contour rings (unit square) and the
+// default descent path. Uses d3-contour, which never ships to the browser.
 import { contours } from 'd3-contour';
+import { f, levels, fromUnit, toUnit, run, START } from './fn.js';
 
-const A = 3.2, B = 0.55, C = 0.9, X0 = 0.55, D = 0.05, Y0 = 0.15;
-
-export const f = (x, y) => A * (y - B * x * x) ** 2 + C * (x - X0) ** 2 + D * (y - Y0) ** 2;
-const grad = (x, y) => {
-  const r = y - B * x * x;
-  return [-4 * A * B * x * r + 2 * C * (x - X0), 2 * A * r + 2 * D * (y - Y0)];
-};
-
-// Domain in function space, mapped onto the drawing.
-export const DOMAIN = { x0: -2.6, x1: 2.0, y0: -1.1, y1: 3.4 };
-
-export function descentPath({ start = [-2.2, 3.05], eta = 0.012, iters = 4000, keep = 22 } = {}) {
-  let [x, y] = start;
-  const all = [[x, y]];
-  for (let i = 0; i < iters; i++) {
-    const [gx, gy] = grad(x, y);
-    x -= eta * gx; y -= eta * gy;
-    all.push([x, y]);
-    if (Math.hypot(gx, gy) < 1e-5) break;
+// Douglas–Peucker simplification in unit coordinates.
+function simplify(pts, tol) {
+  if (pts.length < 3) return pts;
+  const [a, b] = [pts[0], pts[pts.length - 1]];
+  let idx = 0, max = 0;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [px, py] = pts[i];
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const len = Math.hypot(dx, dy) || 1e-9;
+    const d = Math.abs(dy * px - dx * py + b[0] * a[1] - b[1] * a[0]) / len;
+    if (d > max) { max = d; idx = i; }
   }
-  // Trim the long tail where the steps become invisible, then mark every
-  // k-th iterate: long strides where the slope is steep, short ones as the
-  // path settles into the minimum.
-  let end = all.length - 1;
-  while (end > 0 && f(...all[end - 1]) < 2e-4) end--;
-  const line = all.slice(0, end + 1);
-  const k = Math.max(1, Math.round(end / (keep - 1)));
-  const marks = [];
-  for (let i = 0; i < end; i += k) marks.push(line[i]);
-  marks.push(line[end]);
-  return { line, marks };
+  if (max <= tol) return [a, b];
+  return [...simplify(pts.slice(0, idx + 1), tol).slice(0, -1), ...simplify(pts.slice(idx), tol)];
 }
 
-// Contour lines as SVG path data in a `size`-wide square view box.
-export function contourPaths(size = 1000, res = 180, levels) {
-  // Sample 6% beyond the view on every side: d3 closes each ring along the
-  // grid edge, and those closing segments must fall outside the drawing.
-  const PAD = 0.06;
-  const w = DOMAIN.x1 - DOMAIN.x0, h = DOMAIN.y1 - DOMAIN.y0;
-  const x0 = DOMAIN.x0 - w * PAD, x1 = DOMAIN.x1 + w * PAD, y0 = DOMAIN.y0 - h * PAD, y1 = DOMAIN.y1 + h * PAD;
+// Contour lines as open polylines in unit coordinates [0,1]², one entry per
+// level: { level, lines: [[[u, v], ...], ...] }. Segments that run along the
+// frame (d3 closes rings there) are removed, so no box is drawn.
+export function contourLines(res = 180, tol = 0.0012) {
   const values = new Float64Array(res * res);
   for (let j = 0; j < res; j++)
-    for (let i = 0; i < res; i++)
-      values[j * res + i] = f(x0 + ((x1 - x0) * i) / (res - 1), y1 - ((y1 - y0) * j) / (res - 1));
-  const lv = levels ?? Array.from({ length: 13 }, (_, k) => 0.04 * Math.pow(1.72, k));
-  const s = (size * (1 + 2 * PAD)) / (res - 1);
-  const o = size * PAD;
-  return contours().size([res, res]).thresholds(lv)(values).map((c) =>
-    c.coordinates
-      .flatMap((poly) => poly.map((ring) =>
-        'M' + ring.map(([px, py]) => `${((px - 0.5) * s - o).toFixed(1)},${((py - 0.5) * s - o).toFixed(1)}`).join('L') + 'Z'))
-      .join('')
-  );
+    for (let i = 0; i < res; i++) values[j * res + i] = f(...fromUnit((i + 0.5) / res, (j + 0.5) / res));
+  const lv = levels();
+  const edge = (p) => p[0] <= 0 || p[0] >= res || p[1] <= 0 || p[1] >= res;
+  return contours().size([res, res]).thresholds(lv)(values).map((c, k) => {
+    const lines = [];
+    for (const poly of c.coordinates) for (const ring of poly) {
+      let cur = [];
+      for (let i = 0; i < ring.length; i++) {
+        const p = ring[i], q = ring[i + 1];
+        cur.push([p[0] / res, p[1] / res]);
+        if (q && edge(p) && edge(q)) { if (cur.length > 1) lines.push(cur); cur = []; }
+      }
+      if (cur.length > 1) lines.push(cur);
+    }
+    return { level: lv[k], lines: lines.map((l) => simplify(l, tol).map(([u, v]) => [+u.toFixed(4), +v.toFixed(4)])) };
+  });
 }
 
-export function toView([x, y], size = 1000) {
-  const { x0, x1, y0, y1 } = DOMAIN;
-  return [((x - x0) / (x1 - x0)) * size, ((y1 - y) / (y1 - y0)) * size];
+export function defaultPath() {
+  return run(START).map((p) => toUnit(...p));
 }
+
+// SVG path data (for the no-JS fallback) in a `size` view box.
+export const toPathD = (line, size) => 'M' + line.map(([u, v]) => `${(u * size).toFixed(1)},${(v * size).toFixed(1)}`).join('L');

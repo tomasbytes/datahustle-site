@@ -1,0 +1,169 @@
+---
+// Small live maths figures, drawn in lines. Geometry is computed at build
+// time from seeded data; src/scripts/reveal.ts adds `.is-on` when a figure
+// scrolls into view, which plays its CSS draw-in. Without JS, or with
+// reduced motion, the finished figure shows.
+interface Props {
+  kind: 'regression' | 'network' | 'response' | 'pareto' | 'finding';
+  seed?: number;
+  /** finding only: 'up' | 'down' | 'error' */
+  trend?: 'up' | 'down' | 'error';
+  label?: string;
+}
+const { kind, seed = 7, trend = 'up', label } = Astro.props;
+
+const W = 320, H = 200, P = 18; // view box and inner padding
+function rng(s: number) {
+  return () => { s |= 0; s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const rand = rng(seed);
+const gauss = () => { let u = 0, v = 0; while (!u) u = rand(); while (!v) v = rand(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+const X = (t: number) => P + t * (W - 2 * P);
+const Y = (t: number) => H - P - t * (H - 2 * P);
+const pts = (a: [number, number][]) => a.map(([x, y]) => `${X(x).toFixed(1)},${Y(y).toFixed(1)}`).join(' ');
+
+let body = '';
+let title = '';
+
+if (kind === 'regression') {
+  title = 'Scatter points settling onto a fitted regression line';
+  const n = 34;
+  const data = Array.from({ length: n }, (_, i) => {
+    const x = 0.04 + (0.92 * (i + rand() * 0.8)) / n;
+    return [x, Math.min(0.96, Math.max(0.04, 0.16 + 0.66 * x + gauss() * 0.075))] as [number, number];
+  });
+  const mx = data.reduce((s, d) => s + d[0], 0) / n, my = data.reduce((s, d) => s + d[1], 0) / n;
+  const b = data.reduce((s, d) => s + (d[0] - mx) * (d[1] - my), 0) / data.reduce((s, d) => s + (d[0] - mx) ** 2, 0);
+  const a = my - b * mx;
+  body += `<path class="axis" d="M${X(0)},${Y(1)}V${Y(0)}H${X(1)}"/>`;
+  body += data.map(([x, y], i) => {
+    const drift = (rand() - 0.5) * 70;
+    return `<circle class="pt" cx="${X(x).toFixed(1)}" cy="${Y(y).toFixed(1)}" r="2.4" style="--i:${i};--dy:${drift.toFixed(1)}px"/>`;
+  }).join('');
+  body += `<line class="draw fit" pathLength="1" x1="${X(0)}" y1="${Y(a)}" x2="${X(1)}" y2="${Y(a + b)}"/>`;
+}
+
+if (kind === 'network') {
+  title = 'A small neural network whose connections activate layer by layer';
+  const layers = [3, 5, 5, 2];
+  const nx = (l: number) => X(0.06 + (0.88 * l) / (layers.length - 1));
+  const ny = (l: number, i: number) => Y(0.5 + ((i - (layers[l] - 1) / 2) * 0.86) / Math.max(...layers));
+  let edges = '', live = '';
+  for (let l = 0; l < layers.length - 1; l++)
+    for (let i = 0; i < layers[l]; i++)
+      for (let j = 0; j < layers[l + 1]; j++) {
+        const d = `M${nx(l).toFixed(1)},${ny(l, i).toFixed(1)}L${nx(l + 1).toFixed(1)},${ny(l + 1, j).toFixed(1)}`;
+        edges += `<path class="edge" d="${d}"/>`;
+        const w = rand();
+        if (w > 0.55) live += `<path class="draw live" pathLength="1" d="${d}" style="--l:${l};stroke-width:${(0.6 + w * 1.4).toFixed(2)}"/>`;
+      }
+  let nodes = '';
+  layers.forEach((c, l) => { for (let i = 0; i < c; i++) nodes += `<circle class="node" cx="${nx(l).toFixed(1)}" cy="${ny(l, i).toFixed(1)}" r="5" style="--l:${l}"/>`; });
+  body += edges + live + nodes;
+}
+
+if (kind === 'response') {
+  title = 'Diminishing-returns response curves, with the optimal spend point marked';
+  // r(x) = a(1 − e^{−bx}); the optimum is where marginal return equals cost λ.
+  const curves = [ { a: 0.86, b: 3.1 }, { a: 0.62, b: 5.2 }, { a: 0.4, b: 8.5 } ];
+  const lambda = 0.55;
+  body += `<path class="axis" d="M${X(0)},${Y(1)}V${Y(0)}H${X(1)}"/>`;
+  curves.forEach(({ a, b }, i) => {
+    const line = Array.from({ length: 61 }, (_, k) => { const x = k / 60; return [x, a * (1 - Math.exp(-b * x))] as [number, number]; });
+    body += `<polyline class="draw ${i ? 'curve-2' : 'curve'}" pathLength="1" points="${pts(line)}" style="--i:${i}"/>`;
+  });
+  const { a, b } = curves[0];
+  const xs = Math.log((a * b) / lambda) / b, ys = a * (1 - Math.exp(-b * xs));
+  const dx = 0.16;
+  body += `<line class="draw tangent" pathLength="1" x1="${X(xs - dx)}" y1="${Y(ys - lambda * dx)}" x2="${X(xs + dx)}" y2="${Y(ys + lambda * dx)}"/>`;
+  body += `<path class="guide" d="M${X(xs).toFixed(1)},${Y(ys).toFixed(1)}V${Y(0)}"/>`;
+  body += `<rect class="opt" x="${(X(xs) - 5).toFixed(1)}" y="${(Y(ys) - 5).toFixed(1)}" width="10" height="10"/>`;
+}
+
+if (kind === 'pareto') {
+  title = 'A Pareto frontier of effort against return, with the chosen point marked';
+  const cand = Array.from({ length: 26 }, () => {
+    const e = 0.05 + rand() * 0.9;
+    const frontier = 1 - (1 - e) ** 2.2;
+    return [e, Math.max(0.04, frontier * (0.55 + rand() * 0.45))] as [number, number];
+  });
+  // Non-dominated set: less effort and more return beats a candidate.
+  const front = cand.filter(([e, r]) => !cand.some(([e2, r2]) => e2 <= e && r2 >= r && (e2 < e || r2 > r))).sort((p, q) => p[0] - q[0]);
+  const knee = front.reduce((best, p) => (p[1] - 0.55 * p[0] > best[1] - 0.55 * best[0] ? p : best), front[0]);
+  body += `<path class="axis" d="M${X(0)},${Y(1)}V${Y(0)}H${X(1)}"/>`;
+  body += cand.filter((c) => !front.includes(c)).map(([e, r], i) => `<circle class="cand" cx="${X(e).toFixed(1)}" cy="${Y(r).toFixed(1)}" r="2.6" style="--i:${i}"/>`).join('');
+  body += `<polyline class="draw front" pathLength="1" points="${pts(front)}"/>`;
+  body += front.map(([e, r], i) => `<circle class="fpt" cx="${X(e).toFixed(1)}" cy="${Y(r).toFixed(1)}" r="2.8" style="--i:${i}"/>`).join('');
+  body += `<rect class="opt" x="${(X(knee[0]) - 5).toFixed(1)}" y="${(Y(knee[1]) - 5).toFixed(1)}" width="10" height="10"/>`;
+}
+
+if (kind === 'finding') {
+  title = `Illustrative before and after chart${label ? `: ${label}` : ''}`;
+  const n = 24, cut = 12;
+  const series = Array.from({ length: n }, (_, i) => {
+    const t = i / (n - 1);
+    const noise = gauss() * 0.035;
+    if (trend === 'up') return i < cut ? 0.34 + noise + 0.02 * Math.sin(i) : 0.34 + 0.42 * (1 - Math.exp(-(i - cut + 1) / 4)) + noise;
+    if (trend === 'down') return i < cut ? 0.7 + noise : 0.7 - 0.36 * (1 - Math.exp(-(i - cut + 1) / 3.5)) + noise;
+    return i < cut ? 0.62 + noise * 1.8 : 0.62 - 0.32 * (1 - Math.exp(-(i - cut + 1) / 3)) + noise * (0.9 - t * 0.5);
+  }).map((y, i) => [i / (n - 1), Math.min(0.96, Math.max(0.04, y))] as [number, number]);
+  const xc = (cut - 0.5) / (n - 1);
+  body += `<path class="axis" d="M${X(0)},${Y(1)}V${Y(0)}H${X(1)}"/>`;
+  body += `<polyline class="draw before" pathLength="1" points="${pts(series.slice(0, cut))}"/>`;
+  body += `<polyline class="draw after" pathLength="1" points="${pts(series.slice(cut - 1))}"/>`;
+  body += `<path class="cut" d="M${X(xc).toFixed(1)},${Y(1)}V${Y(0)}"/>`;
+}
+---
+<figure class={`fig fig-${kind}`} data-reveal>
+  <svg viewBox={`0 0 ${W} ${H}`} fill="none" role="img" aria-label={title} set:html={body} />
+  <slot />
+</figure>
+
+<style>
+  .fig { margin: 0; }
+  svg { width: 100%; height: auto; overflow: visible; }
+  svg :global(*) { vector-effect: non-scaling-stroke; }
+  svg :global(.axis) { stroke: currentColor; stroke-opacity: 0.35; stroke-width: 1; }
+  svg :global(.guide) { stroke: currentColor; stroke-opacity: 0.35; stroke-width: 1; stroke-dasharray: 2 3; }
+  svg :global(.pt), svg :global(.fpt) { fill: currentColor; }
+  svg :global(.cand) { fill: none; stroke: currentColor; stroke-opacity: 0.45; stroke-width: 1; }
+  svg :global(.fit), svg :global(.curve), svg :global(.front), svg :global(.after) { stroke: currentColor; stroke-width: 1.5; }
+  svg :global(.curve-2), svg :global(.before) { stroke: currentColor; stroke-opacity: 0.4; stroke-width: 1.25; }
+  svg :global(.tangent) { stroke: currentColor; stroke-width: 1; }
+  svg :global(.edge) { stroke: currentColor; stroke-opacity: 0.12; stroke-width: 1; }
+  svg :global(.live) { stroke: currentColor; }
+  svg :global(.node) { fill: var(--paper); stroke: currentColor; stroke-width: 1.25; }
+  svg :global(.opt) { fill: var(--blue); }
+  svg :global(.cut) { stroke: currentColor; stroke-width: 1; stroke-dasharray: 3 3; }
+
+  /* Draw-in, armed only when JS runs and motion is welcome. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .fig svg :global(.draw) { stroke-dasharray: 1; stroke-dashoffset: 1; }
+    :global(html.js) .fig svg :global(.pt) { opacity: 0; transform: translateY(var(--dy)); }
+    :global(html.js) .fig svg :global(.cand), :global(html.js) .fig svg :global(.fpt) { opacity: 0; }
+    :global(html.js) .fig svg :global(.opt) { opacity: 0; }
+    :global(html.js) .fig svg :global(.node) { transition: fill 300ms var(--ease); }
+
+    :global(html.js) .fig.is-on svg :global(.draw) { animation: fig-draw 900ms var(--ease-out) forwards; }
+    :global(html.js) .fig.is-on svg :global(.pt) { animation: fig-settle 700ms var(--ease-out) calc(var(--i) * 18ms) forwards; }
+    :global(html.js) .fig.is-on svg :global(.fit) { animation-delay: 900ms; animation-duration: 800ms; }
+    :global(html.js) .fig.is-on svg :global(.cand) { animation: fig-fade 400ms var(--ease-out) calc(var(--i) * 20ms) forwards; }
+    :global(html.js) .fig.is-on svg :global(.front) { animation-delay: 500ms; animation-duration: 900ms; }
+    :global(html.js) .fig.is-on svg :global(.fpt) { animation: fig-fade 300ms var(--ease-out) calc(700ms + var(--i) * 90ms) forwards; }
+    :global(html.js) .fig.is-on svg :global(.curve), :global(html.js) .fig.is-on svg :global(.curve-2) { animation-delay: calc(var(--i) * 160ms); animation-duration: 1000ms; }
+    :global(html.js) .fig.is-on svg :global(.tangent) { animation-delay: 1150ms; animation-duration: 500ms; }
+    :global(html.js) .fig.is-on svg :global(.opt) { animation: fig-fade 360ms var(--ease-out) 1500ms forwards; }
+    :global(html.js) .fig-pareto.is-on svg :global(.opt) { animation-delay: 1500ms; }
+    :global(html.js) .fig.is-on svg :global(.live) { animation-delay: calc(var(--l) * 380ms); animation-duration: 520ms; }
+    :global(html.js) .fig.is-on svg :global(.node) { animation: fig-node 1ms linear calc(var(--l) * 380ms) forwards; }
+    :global(html.js) .fig.is-on svg :global(.before) { animation-duration: 700ms; }
+    :global(html.js) .fig.is-on svg :global(.after) { animation-delay: 650ms; animation-duration: 900ms; }
+  }
+  @media (prefers-reduced-motion: reduce) { svg :global(.node) { fill: currentColor; } }
+  :global(html:not(.js)) svg :global(.node) { fill: currentColor; }
+
+  @keyframes fig-draw { to { stroke-dashoffset: 0; } }
+  @keyframes fig-settle { to { opacity: 1; transform: none; } }
+  @keyframes fig-fade { to { opacity: 1; } }
+  @keyframes fig-node { to { fill: currentColor; } }
+</style>

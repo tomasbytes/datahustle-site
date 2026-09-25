@@ -30,6 +30,8 @@ for (const page of pages) {
   html = html.replace(/url\((['"]?)\/(fonts\/[^)'"]+)\1\)/g, (_, q, p) => `url(${dataUri(p)})`);
   html = html.replace(/src="\/(clients\/[^"]+)"/g, (_, p) => `src="${dataUri(p)}"`);
   html = html.replace(/<link rel="preload"[^>]*>/g, '');
+  // Bundled module scripts become inline modules.
+  html = html.replace(/<script type="module" src="\/(_astro\/[^"]+)"><\/script>/g, (_, p) => `<script type="module">${readFileSync(join(SRC, p), 'utf8')}</script>`);
   html = html.replace(/href="\/(favicon\.svg|favicon-32\.png|apple-touch-icon\.png)"/g, (_, p) => `href="${dataUri(p)}"`);
   // Internal page links → relative .html files.
   html = html.replace(/href="(\/[^"]*)"/g, (m, href) => {

@@ -2,13 +2,12 @@
 // Cookie consent. Google Consent Mode v2 defaults are set in <head> (Base.astro);
 // GTM itself loads only after the visitor accepts.
 ---
-<section class="consent" data-consent hidden aria-label="Cookie consent">
-  <div class="wrap inner">
-    <p><b>Cookies.</b> We use analytics cookies to understand how this site is used. They load only if you accept.</p>
-    <div class="actions">
-      <button type="button" class="button ghost" data-consent-choice="granted">Accept</button>
-      <button type="button" class="button ghost" data-consent-choice="denied">Reject</button>
-    </div>
+<section class="consent" data-consent hidden aria-labelledby="consent-title">
+  <p id="consent-title" class="title">Cookies</p>
+  <p class="text">We use analytics cookies to understand how this site is used. They load only if you accept.</p>
+  <div class="actions">
+    <button type="button" class="button ghost" data-consent-choice="granted">Accept</button>
+    <button type="button" class="button ghost" data-consent-choice="denied">Reject</button>
   </div>
 </section>
 
@@ -30,20 +29,22 @@
 </script>
 
 <style>
+  /* A small box in the corner, clear of the page content. */
   .consent {
-    position: fixed; z-index: 40; left: 0; right: 0; bottom: 0;
+    position: fixed; z-index: 40;
+    right: max(1rem, env(safe-area-inset-right, 0px));
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    width: min(20rem, calc(100vw - 2rem));
+    padding: 1rem;
     background: var(--paper);
-    border-top: 1px solid var(--black);
+    border: 1px solid var(--black);
+    display: grid; gap: 0.625rem;
+    font-size: 0.875rem; line-height: 1.35;
     transition: opacity 240ms var(--ease-out), transform 240ms var(--ease-out);
-    @starting-style { opacity: 0; transform: translateY(100%); }
+    @starting-style { opacity: 0; transform: translateY(8px); }
   }
-  .consent[hidden] { display: none; }
-  .inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding-block: 0.875rem; }
-  .actions { display: flex; gap: 0.5rem; flex: none; }
-  .actions .button { min-height: 2.5rem; min-width: 6.5rem; }
-  @media (max-width: 40rem) {
-    .inner { flex-direction: column; align-items: stretch; }
-    .actions .button { flex: 1; }
-  }
+  .title { font-weight: 600; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.25rem; }
+  .actions .button { min-height: 2.5rem; padding: 0 1rem; font-size: 0.875rem; }
   @media (prefers-reduced-motion: reduce) { .consent { transition: opacity 200ms ease; @starting-style { transform: none; } } }
 </style>

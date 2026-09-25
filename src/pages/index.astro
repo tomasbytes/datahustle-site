@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import Descent from '../components/Descent.astro';
+import Instrument from '../components/Instrument.astro';
+import Figure from '../components/Figure.astro';
 import Arrow from '../components/Arrow.astro';
 import { getCollection } from 'astro:content';
 import { SERVICES, STEPS, CLIENTS, FINDINGS, FOUNDERS } from '../data/site.js';
@@ -16,301 +17,368 @@ const logos = CLIENTS.map((c) => {
   return { ...c, width, height: Math.round((width * h) / w) };
 });
 
+const FIGURE: Record<string, 'regression' | 'network' | 'response' | 'pareto'> = {
+  measurement: 'regression',
+  'ai-data': 'network',
+  'performance-media': 'response',
+  strategy: 'pareto',
+};
+const FINDING_CHARTS = [
+  { trend: 'up', label: 'Revenue index' },
+  { trend: 'down', label: 'Cost per acquisition' },
+  { trend: 'error', label: 'Forecast error' },
+] as const;
+
 const posts = (await getCollection('pulse', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 2);
 const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 <Base>
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap grid">
-      <div class="hero-text">
-        <h1 id="hero-title"><span>Growth is an optimization problem.</span> <span>We find the path.</span></h1>
-        <p class="lead">DataHustle is an intelligence and innovation partner for decision-makers. We build the measurement, data and AI systems that show where your business should intervene, and what each move is worth.</p>
-        <a class="link" href="/contact">Request a strategy session <Arrow /></a>
-      </div>
-      <div class="hero-figure">
-        <Descent />
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="position-title">
-    <div class="wrap grid">
-      <h2 id="position-title" class="h section-head">Not AI as a trend. Clarity as a system.</h2>
-      <div class="section-body position">
-        <p class="sub statement">Most companies do not lack data. They lack a structure that turns it into decisions.</p>
-        <div class="cols">
-          <p>We start with how your business makes money. We map the system behind it: the channels, the data, the decisions and the people who make them. Then we find the few points where a change moves revenue.</p>
-          <p>We build only what is needed to act on those points: measurement you can trust, models that answer a real question, media bought on evidence, and a way of working that keeps improving after we step back.</p>
+  <div class="page" data-thread-host>
+    <!-- Hero: pinned on desktop while the map tilts into 3D and settles. -->
+    <section class="hero" data-hero data-thread-point data-thread-x="margin" data-thread-y="bottom" aria-labelledby="hero-title">
+      <div class="hero-pin">
+        <div class="wrap grid hero-grid">
+          <div class="hero-text">
+            <h1 id="hero-title"><span>Growth is an optimization problem.</span> <span>We find the path.</span></h1>
+            <p class="lead">DataHustle is an intelligence and innovation partner for decision-makers. We build the measurement, data and AI systems that show where your business should intervene, and what each move is worth.</p>
+            <a class="link" href="/contact">Request a strategy session <Arrow /></a>
+          </div>
+          <div class="hero-figure">
+            <Instrument />
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section" aria-labelledby="services-title">
-    <div class="wrap grid">
-      <div class="section-head">
-        <h2 id="services-title" class="h">Four disciplines, one system.</h2>
-        <a class="link head-link" href="/services">All services <Arrow /></a>
-      </div>
-      <ul class="section-body services">
-        {SERVICES.map((s) => (
-          <li>
-            <a class="service" href={`/services#${s.id}`}>
-              <h3 class="sub">{s.title}</h3>
-              <p class="question">{s.question}</p>
-              <ul class="deliverables">
-                {s.deliverables.map((d) => <li>{d}</li>)}
-              </ul>
-              <Arrow class="arrow service-arrow" />
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="method-title">
-    <div class="wrap grid">
-      <div class="section-head">
-        <h2 id="method-title" class="h">How we work: one step at a time.</h2>
-        <p class="note muted head-note">[TO CONFIRM] Step names and wording.</p>
-      </div>
-      <ol class="section-body steps">
-        {STEPS.map((s, i) => (
-          <li class="step">
-            <span class="k note" aria-hidden="true"><span><i>k</i> = {i + 1}</span></span>
-            <h3 class="sub">{s.title}</h3>
-            <p class="muted">{s.text}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="clients-title">
-    <div class="wrap grid">
-      <h2 id="clients-title" class="h section-head">Selected clients</h2>
-      <ul class="section-body clients">
-        {logos.map((c) => (
-          <li><img src={`/clients/${c.file}.png`} alt={c.name} width={c.width} height={c.height} decoding="async" /></li>
-        ))}
-        {Array.from({ length: (4 - (CLIENTS.length % 4)) % 4 }, () => <li class="filler" aria-hidden="true"></li>)}
-      </ul>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="findings-title">
-    <div class="wrap grid">
-      <div class="section-head">
-        <h2 id="findings-title" class="h">Findings</h2>
-        <p class="muted head-note">Selected engagements. Client names withheld.</p>
-      </div>
-      <ol class="section-body findings">
-        {FINDINGS.map((f, i) => (
-          <li class="finding">
-            <p class="sub f-sector">{f.sector}</p>
-            <dl>
-              <div><dt class="note muted">Challenge</dt><dd>{f.challenge}</dd></div>
-              <div><dt class="note muted">Intervention</dt><dd>{f.intervention}</dd></div>
-              <div><dt class="note muted">Outcome</dt><dd>{f.outcome}</dd></div>
-            </dl>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="people-title">
-    <div class="wrap grid">
-      <h2 id="people-title" class="h section-head">The people you work with.</h2>
-      <ul class="section-body people">
-        {FOUNDERS.map((p) => (
-          <li class="person">
-            <div class="portrait" aria-hidden="true"><span class="note muted">Photo</span></div>
-            <h3 class="sub">{p.name}</h3>
-            <p class="muted">{p.title}</p>
-            <p class="cred">{p.credentials}</p>
-            <p class="muted">{p.focus}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  {posts.length > 0 && (
-    <section class="section" aria-labelledby="pulse-title">
+    <!-- Position: one full-width statement, then three columns. -->
+    <section class="section" aria-labelledby="position-title">
       <div class="wrap grid">
-        <div class="section-head">
-          <h2 id="pulse-title" class="h">Pulse</h2>
-          <a class="link head-link" href="/pulse">All articles <Arrow /></a>
-        </div>
-        <ul class="section-body posts">
-          {posts.map((p) => (
+        <h2 id="position-title" class="h statement">Not AI as a trend. Clarity as a system.</h2>
+        <p class="sub pos-a">Most companies do not lack data. They lack a structure that turns it into decisions.</p>
+        <p class="pos-b">We start with how your business makes money. We map the system behind it: the channels, the data, the decisions and the people who make them. Then we find the few points where a change moves revenue.</p>
+        <p class="pos-c">We build only what is needed to act on those points: measurement you can trust, models that answer a real question, media bought on evidence, and a way of working that keeps improving after we step back.</p>
+      </div>
+    </section>
+
+    <!-- Services: a ruled 2 × 2 field, each discipline with its own figure. -->
+    <section class="section" aria-labelledby="services-title">
+      <div class="wrap grid">
+        <h2 id="services-title" class="h svc-title">Four disciplines, one system.</h2>
+        <a class="link svc-link" href="/services">All services <Arrow /></a>
+        <ul class="services">
+          {SERVICES.map((s) => (
             <li>
-              <a class="post" href={`/pulse/${p.id}`}>
-                <time class="note muted" datetime={p.data.date.toISOString()}>{fmt.format(p.data.date)}{p.data.placeholder && <><br />Placeholder [TO CONFIRM]</>}</time>
-                <h3 class="sub">{p.data.title}</h3>
-                <p class="muted">{p.data.description}</p>
+              <a class="service" href={`/services#${s.id}`}>
+                <Figure kind={FIGURE[s.id]} seed={s.id.length * 13} />
+                <div class="svc-text">
+                  <h3 class="sub">{s.title} <Arrow class="arrow svc-arrow" /></h3>
+                  <p class="question">{s.question}</p>
+                  <ul class="deliverables">
+                    {s.deliverables.map((d) => <li>{d}</li>)}
+                  </ul>
+                </div>
               </a>
             </li>
           ))}
         </ul>
       </div>
     </section>
-  )}
 
-  <section class="section close" aria-labelledby="close-title">
-    <div class="wrap grid">
-      <div class="close-mark" aria-hidden="true">
-        <svg viewBox="0 0 120 24" fill="none">
-          <path d="M1 12H119" stroke="#000" stroke-opacity=".3" />
-          {[0, 44, 72, 88, 97, 102].map((x) => <circle cx={x + 6} cy="12" r="2.5" fill="#000" />)}
-          <rect x="108" y="6.5" width="11" height="11" fill="#3335ff" />
-        </svg>
+    <!-- Method: full-bleed black. Four iterations, stepping down. -->
+    <section class="method" aria-labelledby="method-title">
+      <div class="wrap grid method-head">
+        <h2 id="method-title" class="h">How we work: one step at a time.</h2>
+        <p class="note method-note">Each engagement repeats the same loop until the gains flatten. [TO CONFIRM] Step names and wording.</p>
       </div>
-      <div class="close-body">
-        <h2 id="close-title" class="h">Start with one conversation.</h2>
-        <p class="lead">Tell us what you are trying to solve. We reply within two working days with a proposed agenda for a strategy session. <span class="muted">[TO CONFIRM]</span></p>
-        <a class="link" href="/contact">Request a strategy session <Arrow /></a>
+      <ol class="wrap grid steps">
+        {STEPS.map((s, i) => (
+          <li class="step" style={`--i:${i}`}>
+            <span class="point" data-thread-point data-thread-route={i === 0 ? 'vh' : 'hv'} data-thread-light aria-hidden="true"></span>
+            <span class="k mono" aria-hidden="true"><i>k</i> = {i + 1}</span>
+            <span class="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="sub">{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+      <span class="thread-anchor" data-thread-point data-thread-x="margin" data-thread-y="bottom" aria-hidden="true"></span>
+    </section>
+
+    <!-- Clients: the heading is the first cell of the ruled index. -->
+    <section class="section" aria-labelledby="clients-title">
+      <div class="wrap">
+        <ul class="clients">
+          <li class="clients-head"><h2 id="clients-title" class="h">Selected clients</h2></li>
+          {logos.map((c) => (
+            <li class="logo"><img src={`/clients/${c.file}.png`} alt={c.name} width={c.width} height={c.height} decoding="async" /></li>
+          ))}
+        </ul>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- Findings: three columns, each with its before/after chart. -->
+    <section class="section" aria-labelledby="findings-title">
+      <div class="wrap grid">
+        <div class="find-head">
+          <h2 id="findings-title" class="h">Findings</h2>
+          <p class="muted">Selected engagements. Client names withheld.</p>
+        </div>
+        <ol class="findings">
+          {FINDINGS.map((f, i) => (
+            <li class="finding">
+              <Figure kind="finding" trend={FINDING_CHARTS[i].trend} label={FINDING_CHARTS[i].label} seed={31 + i * 17}>
+                <figcaption class="chart-cap note">
+                  <span>{FINDING_CHARTS[i].label}, 24 months</span>
+                  <span class="muted">Illustrative data [TO CONFIRM]</span>
+                </figcaption>
+              </Figure>
+              <p class="sub f-sector">{f.sector}</p>
+              <dl>
+                <div><dt class="note muted">Challenge</dt><dd>{f.challenge}</dd></div>
+                <div><dt class="note muted">Intervention</dt><dd>{f.intervention}</dd></div>
+                <div><dt class="note muted">Outcome</dt><dd>{f.outcome}</dd></div>
+              </dl>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="people-title">
+      <div class="wrap grid">
+        <h2 id="people-title" class="h section-head">The people you work with.</h2>
+        <ul class="section-body people">
+          {FOUNDERS.map((p) => (
+            <li class="person">
+              <div class="portrait" aria-hidden="true"><span class="note muted">Photo</span></div>
+              <h3 class="sub">{p.name}</h3>
+              <p class="muted">{p.title}</p>
+              <p class="cred">{p.credentials}</p>
+              <p class="muted">{p.focus}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    {posts.length > 0 && (
+      <section class="section" aria-labelledby="pulse-title">
+        <div class="wrap grid">
+          <div class="section-head">
+            <h2 id="pulse-title" class="h">Pulse</h2>
+            <a class="link head-link" href="/pulse">All articles <Arrow /></a>
+          </div>
+          <ul class="section-body posts">
+            {posts.map((p) => (
+              <li>
+                <a class="post" href={`/pulse/${p.id}`}>
+                  <time class="note muted" datetime={p.data.date.toISOString()}>{fmt.format(p.data.date)}{p.data.placeholder && <><br />Placeholder [TO CONFIRM]</>}</time>
+                  <h3 class="sub">{p.data.title}</h3>
+                  <p class="muted">{p.data.description}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    <section class="section close" aria-labelledby="close-title">
+      <div class="wrap grid">
+        <div class="close-mark"><span class="end" data-thread-point aria-hidden="true"></span></div>
+        <div class="close-body">
+          <h2 id="close-title" class="h">Start with one conversation.</h2>
+          <p class="lead">Tell us what you are trying to solve. We reply within two working days with a proposed agenda for a strategy session. <span class="muted">[TO CONFIRM]</span></p>
+          <a class="link" href="/contact">Request a strategy session <Arrow /></a>
+        </div>
+      </div>
+    </section>
+
+    <svg class="thread" data-thread aria-hidden="true"><path /></svg>
+  </div>
 </Base>
 
+<script>
+  import { reveal } from '../scripts/reveal';
+  import { mountThread } from '../scripts/thread';
+  reveal();
+  const t = document.querySelector<SVGSVGElement>('[data-thread]');
+  if (t) mountThread(t);
+</script>
+
 <style>
-  /* First viewport */
-  .hero .grid {
-    min-height: calc(100svh - 4.5rem);
-    align-items: center;
-    padding-block: clamp(2rem, 5vh, 4rem) clamp(3rem, 8vh, 6rem);
+  .page { position: relative; }
+  .thread-anchor { display: block; height: 0; }
+
+  /* Thread: one hairline in paper, inverted against whatever it crosses, so
+     it reads black on paper and paper on the black section. */
+  .thread {
+    position: absolute; left: 0; top: 0; z-index: 5;
+    pointer-events: none; overflow: visible;
+    mix-blend-mode: difference;
   }
-  .hero-text { grid-column: 1 / span 6; display: grid; gap: 1.75rem; justify-items: start; align-self: center; }
-  h1 {
-    font-size: var(--display);
-    font-weight: 700;
-    line-height: 1.02;
-    letter-spacing: -0.03em;
-  }
+  .thread path { fill: none; stroke: #f7f7f7; stroke-width: 1.25; }
+  :global(html:not(.js)) .thread { display: none; }
+
+  /* Hero */
+  .hero-grid { align-items: center; padding-block: clamp(2rem, 5vh, 4rem) clamp(2.5rem, 6vh, 4.5rem); row-gap: 2.5rem; }
+  .hero-text { grid-column: 1 / span 6; display: grid; gap: 1.75rem; justify-items: start; }
+  h1 { font-size: var(--display); font-weight: 700; line-height: 1.02; letter-spacing: -0.03em; }
   h1 span { display: block; text-wrap: balance; }
   .lead { max-width: 30rem; }
-  .hero-figure { grid-column: 7 / -1; align-self: center; padding: 0 0 3.5rem clamp(0rem, 2vw, 2rem); }
+  .hero-figure { grid-column: 7 / -1; padding-left: clamp(0rem, 2vw, 2rem); }
+  @media (min-width: 60.01rem) {
+    .hero-pin { min-height: calc(100svh - 4.5rem); display: grid; align-items: center; }
+    .hero-figure { max-width: min(100%, calc(100svh - 12rem)); justify-self: end; width: 100%; }
+  }
+  @media (min-width: 60.01rem) and (prefers-reduced-motion: no-preference) {
+    :global(html.js) .hero { height: calc(175svh - 4.5rem); }
+    :global(html.js) .hero-pin { position: sticky; top: 4.5rem; }
+  }
 
   /* Position */
-  .position { display: grid; gap: 2rem; }
-  .statement { max-width: 28ch; }
-  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap) calc(var(--gap) * 2); }
-  .cols p { max-width: 36em; }
+  .statement { grid-column: 1 / span 9; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+  .pos-a { grid-column: 1 / span 4; padding-right: var(--gap); }
+  .pos-b { grid-column: 5 / span 4; }
+  .pos-c { grid-column: 9 / span 4; }
+  .pos-b, .pos-c { max-width: 36em; }
 
-  .head-link { margin-top: 1.5rem; }
-  .head-note { margin-top: 1rem; max-width: 30ch; }
-
-  /* Services: ruled rows, not cards */
-  .services > li { border-bottom: 1px solid var(--rule); }
-  .services > li:first-child .service { padding-top: 0.25rem; }
-  .service {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) 1.5rem;
-    column-gap: var(--gap);
-    row-gap: 0.5rem;
-    padding: 1.5rem 0 1.75rem;
+  /* Services */
+  .svc-title { grid-column: 1 / span 8; }
+  .svc-link { grid-column: 9 / -1; justify-self: end; align-self: end; margin-bottom: 0.4rem; }
+  .services {
+    grid-column: 1 / -1; margin-top: clamp(2rem, 4vw, 3rem);
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--rule);
   }
-  .service h3 { grid-column: 1; transition: color 180ms var(--ease); }
-  .question { grid-column: 1; color: var(--ink-2); }
-  .deliverables { grid-column: 2; grid-row: 1 / span 2; display: grid; gap: 0.375rem; }
+  .services > li { border-bottom: 1px solid var(--rule); }
+  .services > li:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .service {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--gap) calc(var(--gap) * 1.5);
+    align-items: start; height: 100%;
+    padding: clamp(1.5rem, 2.5vw, 2.5rem) clamp(1.25rem, 2.5vw, 2.5rem);
+  }
+  .services > li:nth-child(odd) .service { padding-left: 0; }
+  .svc-text { display: grid; gap: 0.5rem; }
+  .svc-text h3 { display: flex; justify-content: space-between; gap: 1rem; transition: color 180ms var(--ease); }
+  .question { color: var(--ink-2); }
+  .deliverables { display: grid; gap: 0.375rem; margin-top: 0.75rem; }
   .deliverables li { padding-left: 1rem; position: relative; }
   .deliverables li::before { content: ''; position: absolute; left: 0; top: 0.5em; width: 5px; height: 5px; background: #000; }
-  :global(.service-arrow) { grid-column: 3; grid-row: 1; width: 1.25rem; height: 1.25rem; margin-top: 0.1rem; transition: transform 220ms var(--ease-out), color 180ms var(--ease); }
+  .service :global(.svc-arrow) { width: 1.1rem; height: 1.1rem; flex: none; margin-top: 0.2rem; transition: transform 220ms var(--ease-out); }
   @media (hover: hover) and (pointer: fine) {
-    .service:hover h3, .service:hover :global(.service-arrow) { color: var(--blue); }
-    .service:hover :global(.service-arrow) { transform: translateX(4px); }
+    .service:hover h3 { color: var(--blue); }
+    .service:hover :global(.svc-arrow) { transform: translateX(4px); }
   }
 
-  /* Method: iterations k = 1..4 */
-  .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--gap); }
-  .step { display: grid; align-content: start; gap: 0.625rem; position: relative; }
-  .k { display: flex; align-items: center; gap: 0.5rem; }
-  .k::before { content: ''; width: 7px; height: 7px; background: #000; flex: none; }
-  .k { font-family: var(--math); font-size: 0.875rem; }
-  .k i { font-family: 'KaTeX Math', var(--math); }
-  .step p { max-width: 26ch; }
+  /* Method: black, full bleed */
+  .method {
+    margin-top: var(--section);
+    background: var(--black); color: var(--paper);
+    padding-block: clamp(4rem, 3rem + 5vw, 8rem) clamp(5rem, 4rem + 6vw, 9rem);
+    --ink-2: #b9b9b9;
+  }
+  .method-head { align-items: end; row-gap: 1rem; }
+  .method-head h2 { grid-column: 1 / span 6; }
+  .method-note { grid-column: 9 / -1; color: #b9b9b9; max-width: 32ch; }
+  .steps { margin-top: clamp(3rem, 6vw, 5.5rem); row-gap: 3rem; }
+  .step {
+    grid-column: span 3; position: relative;
+    display: grid; align-content: start; gap: 0.75rem;
+    padding-top: 1.75rem;
+    margin-top: calc(var(--i) * clamp(1.5rem, 4.5vw, 4.5rem));
+  }
+  .point {
+    position: absolute; left: 0; top: 0; width: 11px; height: 11px; translate: -5px -5px;
+    border: 1px solid var(--paper); border-radius: 50%; background: var(--black);
+    transition: background-color 300ms var(--ease), border-color 300ms var(--ease), scale 300ms var(--ease-out);
+  }
+  .point:global(.is-lit) { background: var(--paper); }
+  .point:global(.is-current) { background: var(--blue); border-color: var(--blue); scale: 1.25; }
+  .k { position: absolute; left: 1rem; top: -0.55rem; font-size: 0.75rem; color: #b9b9b9; }
+  .k i { font-family: 'KaTeX Math', var(--math); font-size: 1.05em; }
+  .num {
+    font-size: clamp(4.5rem, 2rem + 8vw, 10rem); font-weight: 700; line-height: 0.82; letter-spacing: -0.045em;
+    font-variant-numeric: tabular-nums; margin-bottom: 0.75rem;
+  }
+  .step p { color: #cfcfcf; max-width: 28ch; }
 
-  /* Clients: a ruled index of equal cells */
+  /* Clients: heading + 7 logos = 8 cells, no gaps */
   .clients {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-auto-rows: 1fr;
-    margin-top: -1.25rem; /* the grid starts on the section rule */
-    border-left: 1px solid var(--rule);
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 1fr;
+    border-top: 1px solid var(--black);
   }
-  .clients li {
-    display: grid; place-items: center;
-    aspect-ratio: 16 / 9;
-    padding: 1.25rem;
-    border-right: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-  }
-  .clients img { max-width: 80%; height: auto; max-height: 3.5rem; object-fit: contain; }
+  .clients > li { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .clients > li:nth-child(4n) { border-right: 0; }
+  .clients-head { padding: 1.25rem 1.25rem 1.5rem 0; }
+  .logo { display: grid; place-items: center; aspect-ratio: 16 / 9; padding: 1.25rem; }
+  .logo img { max-width: 80%; height: auto; max-height: 3.5rem; object-fit: contain; opacity: 0.42; transition: opacity 220ms var(--ease); }
+  @media (hover: hover) and (pointer: fine) { .logo:hover img { opacity: 1; } }
 
   /* Findings */
-  .finding:first-child { padding-top: 0.25rem; }
-  .finding {
-    display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
-    column-gap: var(--gap);
-    padding: 1.5rem 0 1.75rem;
-    border-bottom: 1px solid var(--rule);
-  }
-  .finding dl { display: grid; gap: 0.875rem; }
-  .finding dl div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: var(--gap); }
-  .finding dt { padding-top: 0.2rem; }
+  .find-head { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem 2rem; flex-wrap: wrap; }
+  .findings { grid-column: 1 / -1; margin-top: clamp(2rem, 4vw, 3rem); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: calc(var(--gap) * 2); row-gap: 3.5rem; }
+  .finding { display: grid; align-content: start; gap: 1rem; }
+  .chart-cap { display: flex; justify-content: space-between; gap: 1rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--rule); }
+  .f-sector { margin-top: 0.5rem; }
+  .finding dl { display: grid; gap: 0.75rem; }
+  .finding dl div { display: grid; gap: 0.2rem; }
 
-  /* People */
+  /* People (title left, list right) */
   .people { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap) calc(var(--gap) * 2); }
   .person { display: grid; align-content: start; gap: 0.375rem; }
-  .portrait {
-    aspect-ratio: 4 / 5; max-width: 16rem; margin-bottom: 1rem;
-    border: 1px solid var(--rule);
-    display: grid; place-items: end start; padding: 0.625rem;
-  }
+  .portrait { aspect-ratio: 4 / 5; max-width: 16rem; margin-bottom: 1rem; border: 1px solid var(--rule); display: grid; place-items: end start; padding: 0.625rem; }
   .cred { margin-top: 0.625rem; max-width: 34ch; }
 
   /* Pulse */
+  .head-link { margin-top: 1.5rem; }
   .posts > li { border-bottom: 1px solid var(--rule); }
   .posts > li:first-child .post { padding-top: 0.25rem; }
   .post { display: grid; grid-template-columns: 10rem minmax(0, 1fr); column-gap: var(--gap); row-gap: 0.5rem; padding: 1.5rem 0 1.75rem; }
   .post time { grid-row: 1 / span 2; padding-top: 0.35rem; }
   .post h3 { transition: color 180ms var(--ease); }
   .post p { max-width: 60ch; }
-  @media (hover: hover) and (pointer: fine) {
-    .post:hover h3 { color: var(--blue); }
-  }
+  @media (hover: hover) and (pointer: fine) { .post:hover h3 { color: var(--blue); } }
 
-  /* Close */
-  .close .grid { align-items: start; }
-  .close-mark { grid-column: 1 / span 4; padding-top: 0.5rem; }
-  .close-mark svg { width: 8rem; height: auto; }
+  /* Close: the thread ends on the blue square */
+  .close-mark { grid-column: 1 / span 4; padding-top: 0.9rem; }
+  .end { display: block; width: 12px; height: 12px; background: var(--blue); }
   .close-body { grid-column: 5 / -1; display: grid; gap: 1.5rem; justify-items: start; }
 
   @media (max-width: 60rem) {
-    .hero .grid { min-height: 0; padding-top: 2.5rem; row-gap: 2.5rem; }
+    .hero-grid { padding-top: 2.5rem; }
     .hero-text, .hero-figure { grid-column: 1 / -1; }
-    .hero-figure { padding: 0 0 3.5rem; max-width: 36rem; width: 100%; justify-self: center; }
-    .cols { grid-template-columns: 1fr; }
-    .steps { grid-template-columns: 1fr 1fr; row-gap: 2.5rem; }
-    .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; border-top: 1px solid var(--rule); }
-    .clients li { aspect-ratio: 3 / 2; padding: 1rem; }
-    .clients img { max-width: 85%; max-height: 2.75rem; }
-    .close-mark { display: none; }
+    .hero-figure { padding-left: 0; max-width: 36rem; width: 100%; justify-self: center; }
+    .statement { grid-column: 1 / -1; }
+    .pos-a, .pos-b, .pos-c { grid-column: 1 / -1; padding-right: 0; }
+    .pos-b { margin-top: 1.5rem; }
+    .pos-c { margin-top: 1rem; }
+    .svc-title { grid-column: 1 / -1; }
+    .svc-link { grid-column: 1 / -1; justify-self: start; margin-top: 1rem; }
+    .services { grid-template-columns: 1fr; }
+    .services > li:nth-child(odd) { border-right: 0; }
+    .service { padding-inline: 0; }
+    .method-head h2, .method-note { grid-column: 1 / -1; }
+    .step { grid-column: span 6; margin-top: calc(var(--i) * 1.25rem); }
+    .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .clients > li:nth-child(4n) { border-right: 1px solid var(--rule); }
+    .clients > li:nth-child(odd):not(.clients-head) { border-right: 0; }
+    .clients-head { grid-column: 1 / -1; border-right: 0; }
+    .logo:last-child { grid-column: 1 / -1; aspect-ratio: auto; min-height: 7rem; border-right: 0; }
+    .findings { grid-template-columns: 1fr; }
+    .close-mark { grid-column: 1 / -1; padding-top: 0; }
     .close-body { grid-column: 1 / -1; }
   }
   @media (max-width: 40rem) {
-    .service { grid-template-columns: minmax(0, 1fr) 1.5rem; }
-    .deliverables { grid-column: 1; grid-row: auto; margin-top: 0.5rem; }
-    :global(.service-arrow) { grid-column: 2; }
-    .steps { grid-template-columns: 1fr; }
-    .finding { grid-template-columns: 1fr; row-gap: 1rem; }
-    .finding dl div { grid-template-columns: 1fr; gap: 0.25rem; }
+    .service { grid-template-columns: 1fr; }
+    .service :global(.fig) { max-width: 20rem; }
+    .step { grid-column: 1 / -1; margin-top: 0; padding-left: 1.75rem; padding-top: 0; }
+    .point { left: 0; top: 0.55rem; }
+    .k { position: static; }
+    .logo { aspect-ratio: 3 / 2; padding: 1rem; }
+    .logo img { max-width: 85%; max-height: 2.75rem; }
     .people { grid-template-columns: 1fr; row-gap: 3rem; }
     .post { grid-template-columns: 1fr; }
     .post time { grid-row: auto; padding: 0; }
