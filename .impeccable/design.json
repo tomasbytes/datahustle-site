@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-25T10:40:31Z",
+  "generatedAt": "2026-09-25T12:00:00Z",
   "title": "Design System: DataHustle",
   "extensions": {
     "colorMeta": {
@@ -93,6 +93,36 @@
           "#cacaca",
           "#eeeeee"
         ]
+      },
+      "night-note": {
+        "role": "neutral",
+        "displayName": "Night Note",
+        "canonical": "#b9b9b9",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "night-body": {
+        "role": "neutral",
+        "displayName": "Night Body",
+        "canonical": "#cfcfcf",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
       }
     },
     "gradients": [
@@ -106,6 +136,10 @@
       "display": {
         "displayName": "Display",
         "purpose": "Homepage hero headline only, 40 to 72px."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Two-digit step numbers in the black method section only; clamp(4.5rem, 2rem + 8vw, 10rem) / 700 / 0.82 / -0.045em, tabular."
       },
       "headline": {
         "displayName": "Headline",
@@ -123,9 +157,13 @@
         "displayName": "Notes",
         "purpose": "Margin notes, captions, dates, helper text, field errors; 12px / 16px."
       },
+      "data": {
+        "displayName": "Data (Geist Mono)",
+        "purpose": "Measured values only: the instrument readout (x, y, f) at 12px and the live k and f(x_k) counter at 12px."
+      },
       "math": {
         "displayName": "Math",
-        "purpose": "Notation only: the hero formula (15px) and k = n step indices (14px), italic variables in KaTeX Math."
+        "purpose": "Notation only: the hero formula and contact-page k = n indices (14px), italic variables in KaTeX Math."
       }
     },
     "shadows": [],
@@ -154,6 +192,11 @@
         "name": "selection",
         "value": "background: #3335ff; color: #f7f7f7",
         "purpose": "Text selection."
+      },
+      {
+        "name": "thread-point-current",
+        "value": "background #3335ff; border-color #3335ff; scale 1.25; 300ms",
+        "purpose": "The current method step on the thread."
       }
     ],
     "motion": [
@@ -165,12 +208,12 @@
       {
         "name": "ease-out",
         "value": "cubic-bezier(0.23, 1, 0.32, 1)",
-        "purpose": "Movement: arrow advance (220ms), underline draw-in (240ms), button press (140ms), consent entry (240ms), descent marks. No overshoot."
+        "purpose": "Movement: arrow advance (220ms), underline draw-in (240ms), button press (140ms), consent entry (240ms), figure draw-ins (300-1000ms). No overshoot."
       },
       {
         "name": "link-hover",
         "value": "color 180ms ease; arrow translateX(4px) 220ms ease-out",
-        "purpose": "Arrow links and ruled service rows, fine pointers only."
+        "purpose": "Arrow links and service cells, fine pointers only."
       },
       {
         "name": "line-hover",
@@ -188,39 +231,49 @@
         "purpose": ":active on buttons."
       },
       {
-        "name": "descent-draw",
-        "value": "stroke-dashoffset 1 to 0, 3200ms cubic-bezier(0.3, 0, 0.2, 1), 400ms delay",
-        "purpose": "The signature: the hero descent path draws in once."
+        "name": "logo-hover",
+        "value": "opacity 0.42 to 1, 220ms ease",
+        "purpose": "Client logos, fine pointers only."
       },
       {
-        "name": "descent-mark",
-        "value": "opacity 0 to 1, scale 0.6 to 1, 260ms ease-out, timed to the line reaching each iterate",
-        "purpose": "Iterate dots along the path."
+        "name": "instrument-autorun",
+        "value": "default run starts 300ms after 35% of the stage is in view; once",
+        "purpose": "The hero descent plays itself on load."
       },
       {
-        "name": "descent-minimum",
-        "value": "opacity 0 to 1, scale 0.8 to 1, 420ms ease-out, at 400 + 3200 + 80ms",
-        "purpose": "The blue minimum square lands after the path."
+        "name": "instrument-run",
+        "value": "iterations revealed linearly over clamp(400 + n*9ms, 1600ms, 4200ms)",
+        "purpose": "Autorun and click-to-descend runs; k and f(x_k) update live."
       },
       {
-        "name": "descent-caption",
-        "value": "opacity 0 to 1, 400ms ease-out, at 600 + 3200ms",
-        "purpose": "Leader line and margin note."
+        "name": "instrument-tilt",
+        "value": "tilt = smoothstep(sin(pi*p)); lift 0.44, pitch 0.98 rad, yaw -0.3 rad, camera 2.6, shrink 0.14, drop 0.07",
+        "purpose": "Scroll lifts contours to their level heights with a fading 16x16 wireframe, then settles flat. Desktop p = pin progress over a 175svh hero; narrow p = stage position."
       },
       {
-        "name": "descent-wait",
-        "value": "paused until 40% of the figure intersects, when its top starts below 60% of the viewport",
-        "purpose": "On phones the drawing waits until it is seen."
+        "name": "thread-draw",
+        "value": "path length follows scroll to 72% of viewport height; waits while the hero is pinned",
+        "purpose": "The page thread; passed points light in paper (300ms), the last is current in blue."
+      },
+      {
+        "name": "figure-draw",
+        "value": "stroke-dashoffset 1 to 0, 900ms ease-out, once at 35% visibility (rootMargin -8% bottom)",
+        "purpose": "Service and finding figures. Staggers per Figure.astro: regression points 700ms / 18ms apart, fit at 900ms over 800ms; curves 160ms apart over 1000ms, tangent 700ms over 400ms; Pareto candidates 400ms / 20ms apart, frontier 500ms over 900ms, points at 700 + 90ms each; network 380ms per layer over 520ms; Before 700ms, After at 650ms over 900ms."
+      },
+      {
+        "name": "figure-optimum",
+        "value": "opacity 0 to 1, 300ms ease-out at 1000ms (1150ms on Pareto)",
+        "purpose": "The blue optimum square lands last."
       },
       {
         "name": "consent-enter",
-        "value": "@starting-style opacity 0, translateY(100%); 240ms ease-out",
-        "purpose": "Consent bar entry; fade only (200ms) under reduced motion."
+        "value": "@starting-style opacity 0, translateY(8px); 240ms ease-out",
+        "purpose": "Consent box entry; fade only (200ms) under reduced motion."
       },
       {
         "name": "reduced-motion",
         "value": "prefers-reduced-motion: reduce",
-        "purpose": "Descent renders complete with no animation; smooth scroll off; consent bar fades only."
+        "purpose": "Every finished state: no pin, no tilt, default run complete, thread drawn in full, figures complete, smooth scroll off, consent box fades only."
       }
     ],
     "breakpoints": [
@@ -235,6 +288,45 @@
       {
         "name": "max",
         "value": "90rem"
+      }
+    ],
+    "tints": [
+      {
+        "name": "figure-axis",
+        "value": "currentColor at 0.35 opacity, 1px",
+        "purpose": "Figure axes and the dotted optimum guide."
+      },
+      {
+        "name": "figure-secondary",
+        "value": "currentColor at 0.4 opacity, 1.25px",
+        "purpose": "Secondary response curves and the finding 'Before' series."
+      },
+      {
+        "name": "network-edge",
+        "value": "currentColor at 0.12 opacity, 1px",
+        "purpose": "Inactive neural-network edges."
+      },
+      {
+        "name": "wireframe-mesh",
+        "value": "rgba(0,0,0, 0.13 x tilt), 1px",
+        "purpose": "Instrument mesh; fades in with the tilt."
+      },
+      {
+        "name": "crosshair",
+        "value": "rgba(0,0,0,0.35), 1px",
+        "purpose": "Instrument crosshair on the flat map."
+      },
+      {
+        "name": "logo-rest",
+        "value": "opacity 0.42 -> 1 on hover",
+        "purpose": "Client logos in the ruled index."
+      }
+    ],
+    "blend": [
+      {
+        "name": "thread",
+        "value": "stroke #f7f7f7; stroke-width 1.25; mix-blend-mode: difference",
+        "purpose": "The page thread reads black on paper and paper on the black method section."
       }
     ]
   },
@@ -267,9 +359,9 @@
       "name": "Ghost Button",
       "kind": "button",
       "refersTo": "button-ghost",
-      "description": "Consent choices: transparent with a 1px black border; fills blue on hover.",
+      "description": "Consent choices: transparent with a 1px black border, 36px high, 14px; fills blue on hover.",
       "html": "<button class=\"ds-btn-ghost\" type=\"button\">Accept</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 2.5rem; min-width: 6.5rem; padding: 0 1.4rem; border: 1px solid #000; border-radius: 0; background: transparent; color: #000; font: 600 16px/1 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; cursor: pointer; transition: background-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), border-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), transform 140ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-ghost:hover { background: #3335ff; border-color: #3335ff; color: #f7f7f7; } .ds-btn-ghost:active { transform: scale(0.98); } .ds-btn-ghost:focus-visible { outline: 2px solid #3335ff; outline-offset: 3px; }"
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 2.25rem; padding: 0 1rem; border: 1px solid #000; border-radius: 0; background: transparent; color: #000; font: 600 14px/1 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; cursor: pointer; transition: background-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), border-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), transform 140ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-ghost:hover { background: #3335ff; border-color: #3335ff; color: #f7f7f7; } .ds-btn-ghost:active { transform: scale(0.98); } .ds-btn-ghost:focus-visible { outline: 2px solid #3335ff; outline-offset: 3px; }"
     },
     {
       "name": "Text Field",
@@ -291,50 +383,66 @@
       "name": "Section Frame",
       "kind": "custom",
       "refersTo": null,
-      "description": "Every section: black top rule, heading in columns 1-4, body in 5-12, items as hairline-ruled rows.",
+      "description": "Text-led sections (People, Pulse): black top rule, heading in columns 1-4, body in 5-12, items as hairline-ruled rows.",
       "html": "<section class=\"ds-frame\"><h2 class=\"ds-h\">Four disciplines, one system.</h2><ul class=\"ds-rows\"><li><h3 class=\"ds-sub\">Data &amp; measurement architecture</h3><p class=\"ds-muted\">Can you trust the numbers you decide on?</p></li><li><h3 class=\"ds-sub\">AI &amp; data solutions</h3><p class=\"ds-muted\">Where can a model make a better decision than a rule?</p></li></ul></section>",
       "css": ".ds-frame { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1.5rem; border-top: 1px solid #000; padding-top: 1.25rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; } .ds-h { grid-column: 1 / span 4; margin: 0; padding-right: 1.5rem; font-size: 42px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; } .ds-rows { grid-column: 5 / -1; list-style: none; margin: 0; padding: 0; } .ds-rows li { padding: 1.5rem 0 1.75rem; border-bottom: 1px solid rgb(0 0 0 / 0.14); display: grid; gap: 0.5rem; } .ds-rows li:first-child { padding-top: 0.25rem; } .ds-sub { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; } .ds-muted { margin: 0; color: #4a4a4a; font-size: 16px; line-height: 21px; }"
     },
     {
-      "name": "Iteration Step",
+      "name": "Method Step",
       "kind": "custom",
-      "refersTo": null,
-      "description": "Method steps indexed as k = n in the maths face, led by a 7px black square.",
-      "html": "<div class=\"ds-step\"><span class=\"ds-k\"><i>k</i> = 1</span><h3>Measure</h3><p>Establish a baseline you can trust. Audit the data, fix what is broken, agree the metrics that matter.</p></div>",
-      "css": ".ds-step { display: grid; gap: 0.625rem; max-width: 16rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; } .ds-k { display: flex; align-items: center; gap: 0.5rem; font-family: 'KaTeX Main', 'Cambria Math', 'STIX Two Math', 'Times New Roman', serif; font-size: 0.875rem; } .ds-k::before { content: ''; width: 7px; height: 7px; background: #000; flex: none; } .ds-step h3 { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; } .ds-step p { margin: 0; color: #4a4a4a; font-size: 16px; line-height: 21px; }"
+      "refersTo": "method-section",
+      "description": "A step on the full-bleed black method section: thread point, k = n in Geist Mono, huge tabular numeral, Title, body in Night Body.",
+      "html": "<div class=\"ds-method\"><div class=\"ds-step\"><span class=\"ds-point\"></span><span class=\"ds-k\"><i>k</i> = 2</span><span class=\"ds-num\">02</span><h3>Find</h3><p>Model the system and locate the few points where a change moves revenue.</p></div></div>",
+      "css": ".ds-method { background: #000; color: #f7f7f7; padding: 3rem 2rem 2rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; } .ds-step { position: relative; display: grid; gap: 0.75rem; max-width: 18rem; padding: 1.75rem 0 0 1.5rem; } .ds-point { position: absolute; left: 0; top: 0; width: 11px; height: 11px; translate: -5px -5px; border: 1px solid #3335ff; border-radius: 50%; background: #3335ff; scale: 1.25; } .ds-k { position: absolute; left: 1.5rem; top: -1.6rem; font: 400 0.75rem/1.35 'Geist Mono', ui-monospace, monospace; color: #b9b9b9; } .ds-k i { font-family: 'KaTeX Math', 'KaTeX Main', 'Cambria Math', serif; } .ds-num { font-size: 6rem; font-weight: 700; line-height: 0.82; letter-spacing: -0.045em; font-variant-numeric: tabular-nums; margin-bottom: 0.75rem; } .ds-step h3 { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; } .ds-step p { margin: 0; color: #cfcfcf; font-size: 16px; line-height: 21px; max-width: 28ch; }"
     },
     {
       "name": "Descent Strip",
       "kind": "custom",
       "refersTo": null,
-      "description": "The miniature descent: dots converging on the blue minimum square. Closes the homepage and heads the form success state.",
+      "description": "The miniature descent: dots converging on the blue minimum square. Heads the contact form's success state.",
       "html": "<svg class=\"ds-strip\" viewBox=\"0 0 120 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M1 12H119\" stroke=\"#000\" stroke-opacity=\".3\"/><circle cx=\"6\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"50\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"78\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"94\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"103\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"108\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><rect x=\"108\" y=\"6.5\" width=\"11\" height=\"11\" fill=\"#3335ff\"/></svg>",
       "css": ".ds-strip { display: block; width: 8rem; height: auto; }"
     },
     {
-      "name": "Consent Bar",
+      "name": "Consent Box",
       "kind": "custom",
-      "refersTo": "consent-bar",
-      "description": "Fixed bottom bar on paper with a black top rule and two equal ghost buttons; slides up 240ms on entry.",
-      "html": "<section class=\"ds-consent\"><p><b>Cookies.</b> We use analytics cookies to understand how this site is used. They load only if you accept.</p><div class=\"ds-actions\"><button class=\"ds-btn-ghost\" type=\"button\">Accept</button><button class=\"ds-btn-ghost\" type=\"button\">Reject</button></div></section>",
-      "css": ".ds-consent { display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding: 0.875rem 1.5rem; background: #f7f7f7; border-top: 1px solid #000; font: 400 16px/21px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; } .ds-consent p { margin: 0; } .ds-consent b { font-weight: 600; } .ds-actions { display: flex; gap: 0.5rem; flex: none; }"
+      "refersTo": "consent-box",
+      "description": "Compact box fixed bottom-left: 1px black border on paper, one line of 14px copy, two equal outlined buttons.",
+      "html": "<section class=\"ds-consent\"><p><b>Cookies.</b> Analytics cookies load only if you accept.</p><div class=\"ds-actions\"><button class=\"ds-btn-ghost\" type=\"button\">Accept</button><button class=\"ds-btn-ghost\" type=\"button\">Reject</button></div></section>",
+      "css": ".ds-consent { display: grid; gap: 0.5rem; width: min(17.5rem, calc(100vw - 2rem)); padding: 0.75rem; background: #f7f7f7; border: 1px solid #000; font: 400 14px/1.35 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; } .ds-consent p { margin: 0; } .ds-consent b { font-weight: 600; } .ds-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; } .ds-actions .ds-btn-ghost { min-width: 0; width: 100%; }"
+    },
+    {
+      "name": "Instrument Readout",
+      "kind": "custom",
+      "refersTo": "instrument-readout",
+      "description": "The hero instrument's cursor readout and panel: measured values in Geist Mono, hint and formula below a black rule.",
+      "html": "<div class=\"ds-inst\"><div class=\"ds-stage\"><span class=\"ds-cx\"></span><span class=\"ds-cy\"></span><div class=\"ds-readout\">x -0.412   y  1.735\nf 4.8312</div><span class=\"ds-min\"></span></div><div class=\"ds-panel\"><p class=\"ds-hint\">Pick a starting point.</p><p class=\"ds-counter\"><span><i>k</i> = 451</span><span><i>f</i>(<i>x</i><sub><i>k</i></sub>) = 0.0002</span></p><p class=\"ds-formula\"><span class=\"ds-math\"><i>x</i><sub><i>k</i>+1</sub> = <i>x</i><sub><i>k</i></sub> &minus; <i>&eta;</i>&nabla;<i>f</i>(<i>x</i><sub><i>k</i></sub>)</span><span>Gradient descent. Cauchy, 1847.</span></p></div></div>",
+      "css": ".ds-inst { max-width: 26rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; background: #f7f7f7; } .ds-stage { position: relative; height: 12rem; } .ds-cx { position: absolute; left: 40%; top: 0; bottom: 0; width: 1px; background: rgba(0,0,0,0.35); } .ds-cy { position: absolute; top: 35%; left: 0; right: 0; height: 1px; background: rgba(0,0,0,0.35); } .ds-readout { position: absolute; left: calc(40% + 14px); top: calc(35% + 14px); font: 400 0.75rem/1.35 'Geist Mono', ui-monospace, monospace; letter-spacing: 0; font-variant-numeric: tabular-nums; white-space: pre; background: #f7f7f7; padding: 0.25rem 0.375rem; border: 1px solid #000; } .ds-min { position: absolute; right: 22%; bottom: 18%; width: 12px; height: 12px; background: #3335ff; } .ds-panel { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 0.5rem 1.5rem; border-top: 1px solid #000; padding-top: 0.625rem; } .ds-panel p { margin: 0; } .ds-hint { font: 600 12px/16px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; letter-spacing: 0.01em; } .ds-counter { display: flex; gap: 1.5rem; font: 400 0.75rem/1.35 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; } .ds-counter i, .ds-formula i { font-family: 'KaTeX Math', 'KaTeX Main', 'Cambria Math', serif; font-size: 1.05em; } .ds-formula { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; align-items: baseline; font: 400 12px/16px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #4a4a4a; } .ds-math { font-family: 'KaTeX Main', 'Cambria Math', serif; font-size: 0.875rem; color: #000; } .ds-inst sub { font-size: 0.7em; line-height: 0; }"
+    },
+    {
+      "name": "Thread Point",
+      "kind": "custom",
+      "refersTo": "thread-point",
+      "description": "The page thread through the method: a 1.25px difference-blend paper line with square turns; points black until passed, paper when lit, blue when current; ends on a 12px blue square.",
+      "html": "<div class=\"ds-thread\"><svg class=\"ds-line\" viewBox=\"0 0 240 120\" aria-hidden=\"true\"><path d=\"M10 0V40H90V80H170V120\"/></svg><span class=\"ds-pt ds-lit\" style=\"left:90px;top:40px\"></span><span class=\"ds-pt ds-cur\" style=\"left:170px;top:80px\"></span><span class=\"ds-pt\" style=\"left:230px;top:112px\"></span></div>",
+      "css": ".ds-thread { position: relative; width: 240px; height: 120px; background: #000; } .ds-line { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: difference; } .ds-line path { fill: none; stroke: #f7f7f7; stroke-width: 1.25; } .ds-pt { position: absolute; width: 11px; height: 11px; translate: -5px -5px; border: 1px solid #f7f7f7; border-radius: 50%; background: #000; transition: background-color 300ms cubic-bezier(0.25, 0.1, 0.25, 1), border-color 300ms cubic-bezier(0.25, 0.1, 0.25, 1), scale 300ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-lit { background: #f7f7f7; } .ds-cur { background: #3335ff; border-color: #3335ff; scale: 1.25; }"
     }
   ],
   "narrative": {
     "northStar": "The Redlined Proof",
-    "overview": "The site reads as a business system under expert review. Off-white paper, black type and hairline rules on a strict 12-column grid do all the structural work; nothing is filled, lifted or rounded. Growth is treated as an optimization problem, and the only colour on the page is the reviewer's mark: a small blue square at the point of intervention. The signature is a real gradient-descent drawing (Cauchy, 1847), computed at build time from a curved valley function, whose path draws in once and ends in that blue square.\n\nDensity is calm and editorial. Sections open with a full-width black rule and set their heading in the left third, their content in the right two thirds. Lists are ruled rows, never cards. Mathematics appears as notation and diagram, used sparingly (the hero drawing, the `k = 1…n` iteration markers, the closing descent strip), never as decoration for its own sake. This follows PRODUCT.md's binding brand commitments: authoritative, precise, restrained, with mathematical and geometric logic; strict grid; no shadows and no decorative effects; emphasis by SemiBold weight only, never colour.\n\nThe system refuses the agency default: hero slogan over a stock image, service cards, logo carousels, gradient CTAs, eyebrow labels above headings.",
+    "overview": "The site reads as a business system under expert review. Off-white paper, black type and hairline rules on a strict 12-column grid do all the structural work; nothing is filled, lifted or rounded. Growth is treated as an optimization problem, and the only colour on the page is the reviewer's mark: a small blue square at the point of intervention. The signature is a live instrument: a contour map of a real curved-valley function, on which a gradient descent (Cauchy, 1847) runs once on load, answers the pointer with measured readouts, and lifts into a 3D wireframe as the visitor scrolls. From its minimum a single thread carries the descent down the page margin, through the method's iterations, to the blue square that closes the page.\n\nDensity is calm and editorial, with a varied section rhythm: a full-width statement, a ruled 2×2 field of disciplines, one full-bleed black section for the method, a ruled logo index, three-column findings, and title-left frames for people and articles. Every section still opens on a black rule. Lists are ruled rows or ruled cells, never cards. Mathematics appears as working notation and computed diagrams (the instrument, the service and finding figures, `k = n` iteration indices), never as decoration for its own sake. This follows PRODUCT.md's binding brand commitments: authoritative, precise, restrained, with mathematical and geometric logic; strict grid; no shadows; emphasis by SemiBold weight only, never colour.\n\nThe system refuses the agency default: hero slogan over a stock image, service cards, logo carousels, gradient CTAs, eyebrow labels above headings.",
     "keyCharacteristics": [
       "Off-white paper, black type, hairline rules; one accent colour used as markup, not decoration.",
-      "Strict 12-column grid; section frame of black top rule, heading in columns 1–4, body in 5–12.",
-      "Four-step brand type scale plus one hero display size and a maths face for notation.",
-      "Zero radius, zero fills, zero elevation. Structure comes from rules and alignment.",
-      "One motion signature (the descent path drawing in) and quiet, bounce-free hover responses.",
-      "Small black squares as list and step markers; the blue square is reserved for the minimum."
+      "Strict 12-column grid; every section opens on a 1px black rule, with the layout inside varied by content.",
+      "Brand type scale of four steps, plus the hero display, the method numerals, a mono data face for measured values and a maths face for notation.",
+      "Zero radius, zero fills, zero elevation, one inverted section. Structure comes from rules and alignment.",
+      "A live hero instrument and one page thread as the motion signature; figures draw in once on reveal; hover responses stay quiet and bounce-free.",
+      "Squares mark markers and optima; dots mark data and iterates. Blue is reserved for the minimum, the optimum and the current point."
     ],
     "rules": [
       {
         "name": "The Reviewer's Pen Rule",
-        "body": "Blue is markup, not paint. If a blue element is not marking an intervention point, responding to the pointer or keyboard, or flagging an error, it does not exist.",
+        "body": "Blue is markup, not paint. A blue element is a minimum, an optimum or the current point (as a square or a dot), a response to pointer or keyboard (hover, focus, selection, caret), or an error marker. Otherwise it does not exist.",
         "section": "colors"
       },
       {
@@ -349,7 +457,12 @@
       },
       {
         "name": "The Four Steps Rule",
-        "body": "Outside the hero, text uses the brand's four steps (42 / 22 / 16 / 12). The 72px display belongs to the homepage hero alone.",
+        "body": "Outside the hero and the method numerals, text uses the brand's four steps (42 / 22 / 16 / 12). The 72px display belongs to the homepage hero alone; the 72→160px numerals belong to the method section alone.",
+        "section": "typography"
+      },
+      {
+        "name": "The Measured Value Rule",
+        "body": "Geist Mono sets numbers that are being measured live: coordinates, function values, iteration counts. Never words, headings, labels or static figures.",
         "section": "typography"
       },
       {
@@ -358,37 +471,65 @@
         "section": "typography"
       },
       {
+        "name": "The Open-On-A-Rule Rule",
+        "body": "Every section opens on a 1px black rule across the grid. The layout under it may vary, but it stays on the 12 columns; nothing is centred and nothing floats free of the grid.",
+        "section": "layout"
+      },
+      {
         "name": "The Left-Third Rule",
-        "body": "A section's heading lives in columns 1–4 and its content in 5–12. New sections take the same frame rather than inventing a centred or full-bleed layout.",
+        "body": "Text-led sections (people, articles, the close) keep the heading in columns 1–4 and the content in 5–12. A new section varies from it only when its content has a shape of its own (a field, an index, a sequence).",
+        "section": "layout"
+      },
+      {
+        "name": "The One Thread Rule",
+        "body": "The page has one thread: a single 1.25px paper line in difference blend, in the margin, with square turns (R = 0). It starts at the instrument's minimum, steps through the method points and ends on the close's blue square. It never runs through content, never curves and is never doubled.",
         "section": "layout"
       },
       {
         "name": "The Paper Rule",
         "body": "Everything sits on one sheet. A surface is never lifted, filled or tinted to separate it; draw a rule instead.",
         "section": "elevation"
+      },
+      {
+        "name": "The One Inversion Rule",
+        "body": "The method section is the only surface that changes ground, black edge to edge. It carries paper type, Night Note and Night Body greys, and no second accent. No other section inverts.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Honest Instrument Rule",
+        "body": "The instrument shows only what the function computes: real contours, real runs, real readouts. Its depth is projection, not styling: when it tilts, lines rise to their level heights and a faint wireframe appears; no fills, no shading, no lighting.",
+        "section": "elevation"
       }
     ],
     "dos": [
-      "Do build every section on the frame: 1px black top rule, heading in columns 1–4, body in 5–12, fluid section spacing between frames.",
+      "Do open every section on a 1px black top rule across the 12 columns, with fluid section spacing between them.",
+      "Do keep text-led sections on the left-third frame (heading 1–4, body 5–12) and vary the layout only when content has its own shape: a statement and columns, a ruled field, an index, a staircase.",
       "Do separate items with hairline rules (rgb(0 0 0 / 0.14)) and ruled rows or ruled cells.",
-      "Do use Intervention Blue (#3335ff) only for the minimum square, link and button hover, focus ring, selection, caret and field focus, and the error marker.",
+      "Do use Intervention Blue (#3335ff) only for minimum, optimum and current-point squares and dots, and for interaction: hover, focus, selection, caret and field focus, plus the error marker.",
+      "Do use Geist Mono only for measured values: the readout's x, y, f and the live k and f(x_k).",
+      "Do keep the thread single: one 1.25px paper line in difference blend, square turns, stepping through the method points and ending on the close's blue square.",
+      "Do keep the instrument honest: every contour, run and readout is computed from the real function; the 3D view is lines only.",
       "Do make the page's call to action an arrow text link; keep buttons for form submission and consent.",
-      "Do keep text to the brand steps: 42px Bold / 1.1 headings, 22px SemiBold / 1.2 subheadings, 16px / 21px body, 12px / 16px notes. The 40→72px display is for the homepage hero only.",
+      "Do keep text to the brand steps: 42px Bold / 1.1 headings, 22px SemiBold / 1.2 subheadings, 16px / 21px body, 12px / 16px notes. The 40→72px display is for the homepage hero only; the 72→160px numerals are for the method only.",
       "Do emphasise with SemiBold (600) weight.",
-      "Do keep hover responses to colour shifts, underline draw-ins and a 3–4px arrow advance, at 180–240ms on the standard or ease-out curves, gated to fine pointers.",
-      "Do honour `prefers-reduced-motion`: the descent drawing renders complete, smooth scroll turns off, the consent bar only fades.",
-      "Do keep maths motifs real and sparse: a computed drawing, a true formula, iteration indices, the descent strip as a closing divider."
+      "Do keep hover responses to colour shifts, underline draw-ins, a 3–4px arrow advance and the logo opacity lift, at 180–240ms on the standard or ease-out curves, gated to fine pointers.",
+      "Do honour `prefers-reduced-motion` by showing every finished state: no pin and no tilt, the thread drawn in full, figures complete, the default run complete, smooth scroll off, the consent box fading only.",
+      "Do keep maths motifs real: a computed instrument, true formulas, iteration indices, figures built from actual models."
     ],
     "donts": [
-      "Don't use cards, filled panels or tinted surfaces to group content.",
+      "Don't use cards, filled panels or tinted surfaces to group content. The black method section is the one inversion.",
       "Don't use shadows, glows or blur for depth; a box-shadow may only thicken a field stroke.",
-      "Don't round corners. Radius is 0 everywhere.",
+      "Don't round corners. Radius is 0 everywhere; circles are reserved for data points, iterates and thread points.",
       "Don't use colour for emphasis, including blue text for \"important\" words or grey for emphasis.",
+      "Don't use blue for a line, a fill, a series or a label; it only marks a point or answers interaction.",
+      "Don't set words, labels or static numbers in Geist Mono.",
+      "Don't add a second thread, curved turns, or a thread that runs through content rather than the margin and the step points.",
+      "Don't shade, fill or colour the instrument's 3D surface.",
       "Don't place eyebrows, kickers or small labels above headings; the section rule and heading carry the hierarchy.",
       "Don't use the gradient anywhere but the footer band.",
-      "Don't add a second animated signature, scroll-triggered reveals, parallax or any easing with overshoot or bounce.",
-      "Don't add decorative icons, illustrations or glyph icons; the drawn arrow and the square markers are the whole vocabulary.",
-      "Don't add a second blue mark in the first viewport; the minimum square is the only one on screen there."
+      "Don't add motion beyond the set: the instrument's autorun, runs and tilt, the thread, the figures' one-time draw-in, and the hover responses. No parallax, no looping motion, no easing with overshoot or bounce.",
+      "Don't add decorative icons, illustrations or glyph icons; the drawn arrow, the square markers and computed figures are the whole vocabulary.",
+      "Don't add a second blue mark in the first viewport; the instrument's minimum square is the only one on screen there."
     ]
   }
 }

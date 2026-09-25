@@ -96,7 +96,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
         {STEPS.map((s, i) => (
           <li class="step" style={`--i:${i}`}>
             <span class="point" data-thread-point data-thread-route={i === 0 ? 'vh' : 'hv'} data-thread-light aria-hidden="true"></span>
-            <span class="k mono" aria-hidden="true"><i>k</i> = {i + 1}</span>
+            <span class="k" aria-hidden="true"><i>k</i> = {i + 1}</span>
             <span class="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <h3 class="sub">{s.title}</h3>
             <p>{s.text}</p>
@@ -300,7 +300,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   }
   .point:global(.is-lit) { background: var(--paper); }
   .point:global(.is-current) { background: var(--blue); border-color: var(--blue); scale: 1.25; }
-  .k { position: absolute; left: 1.5rem; top: -1.6rem; font-size: 0.75rem; color: #b9b9b9; }
+  .k { position: absolute; left: 1.5rem; top: -1.6rem; font-family: var(--math); font-size: 0.875rem; color: #b9b9b9; }
   .k i { font-family: 'KaTeX Math', var(--math); font-size: 1.05em; }
   .num {
     font-size: clamp(4.5rem, 2rem + 8vw, 10rem); font-weight: 700; line-height: 0.82; letter-spacing: -0.045em;

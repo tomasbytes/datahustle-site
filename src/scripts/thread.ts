@@ -81,7 +81,7 @@ export function mountThread(svg: SVGSVGElement) {
   }
 
   function d(len: number) {
-    // Polyline truncated at `len`, with rounded corners.
+    // Polyline truncated at `len`; corners use radius R (0: square turns).
     const out: P[] = [pts[0]];
     for (let i = 1; i < pts.length; i++) {
       if (cum[i] <= len) { out.push(pts[i]); continue; }

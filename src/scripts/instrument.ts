@@ -256,7 +256,6 @@ export function mountInstrument(root: HTMLElement) {
     const cl = (n: number) => Math.min(0.85, Math.max(0.15, n));
     hint.textContent = 'Descending from your point.';
     startRun(fromUnit(cl(u), cl(v)));
-    window.dataLayer?.push({ event: 'instrument_descent' });
   }
   canvas.addEventListener('pointermove', onMove);
   canvas.addEventListener('pointerleave', onLeave);
