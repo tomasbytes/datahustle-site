@@ -4,6 +4,17 @@ import Descent from '../components/Descent.astro';
 import Arrow from '../components/Arrow.astro';
 import { getCollection } from 'astro:content';
 import { SERVICES, STEPS, CLIENTS, FINDINGS, FOUNDERS } from '../data/site.js';
+import { readFileSync } from 'node:fs';
+
+// Size each logo by optical area rather than by a shared box, so wide
+// wordmarks and compact marks carry the same visual weight.
+const LOGO_AREA = 5000; // px² at 1x
+const logos = CLIENTS.map((c) => {
+  const png = readFileSync(`public/clients/${c.file}.png`);
+  const w = png.readUInt32BE(16), h = png.readUInt32BE(20);
+  const width = Math.min(Math.round(Math.sqrt(LOGO_AREA * (w / h))), 165);
+  return { ...c, width, height: Math.round((width * h) / w) };
+});
 
 const posts = (await getCollection('pulse', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -82,9 +93,10 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     <div class="wrap grid">
       <h2 id="clients-title" class="h section-head">Selected clients</h2>
       <ul class="section-body clients">
-        {CLIENTS.map((c) => (
-          <li><img src={`/clients/${c.file}.png`} alt={c.name} decoding="async" /></li>
+        {logos.map((c) => (
+          <li><img src={`/clients/${c.file}.png`} alt={c.name} width={c.width} height={c.height} decoding="async" /></li>
         ))}
+        {Array.from({ length: (4 - (CLIENTS.length % 4)) % 4 }, () => <li class="filler" aria-hidden="true"></li>)}
       </ul>
     </div>
   </section>
@@ -138,7 +150,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
           {posts.map((p) => (
             <li>
               <a class="post" href={`/pulse/${p.id}`}>
-                <time class="note muted" datetime={p.data.date.toISOString()}>{fmt.format(p.data.date)}</time>
+                <time class="note muted" datetime={p.data.date.toISOString()}>{fmt.format(p.data.date)}{p.data.placeholder && <><br />Placeholder [TO CONFIRM]</>}</time>
                 <h3 class="sub">{p.data.title}</h3>
                 <p class="muted">{p.data.description}</p>
               </a>
@@ -182,7 +194,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     letter-spacing: -0.03em;
   }
   h1 span { display: block; text-wrap: balance; }
-  .lead { font-size: 1.25rem; line-height: 1.4; max-width: 34rem; }
+  .lead { max-width: 30rem; }
   .hero-figure { grid-column: 7 / -1; align-self: center; padding: 0 0 3.5rem clamp(0rem, 2vw, 2rem); }
 
   /* Position */
@@ -195,8 +207,8 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   .head-note { margin-top: 1rem; max-width: 30ch; }
 
   /* Services: ruled rows, not cards */
-  .services { border-top: 1px solid var(--rule); }
   .services > li { border-bottom: 1px solid var(--rule); }
+  .services > li:first-child .service { padding-top: 0.25rem; }
   .service {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) 1.5rem;
@@ -217,8 +229,9 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
 
   /* Method: iterations k = 1..4 */
   .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--gap); }
-  .step { display: grid; align-content: start; gap: 0.625rem; padding-top: 1.25rem; position: relative; border-top: 1px solid var(--black); }
-  .step::before { content: ''; position: absolute; top: -4px; left: 0; width: 7px; height: 7px; background: #000; }
+  .step { display: grid; align-content: start; gap: 0.625rem; position: relative; }
+  .k { display: flex; align-items: center; gap: 0.5rem; }
+  .k::before { content: ''; width: 7px; height: 7px; background: #000; flex: none; }
   .k { font-family: var(--math); font-size: 0.875rem; }
   .k i { font-family: 'KaTeX Math', var(--math); }
   .step p { max-width: 26ch; }
@@ -237,10 +250,10 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     border-right: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
   }
-  .clients img { width: auto; height: auto; max-width: 78%; max-height: 3.25rem; object-fit: contain; }
+  .clients img { max-width: 80%; height: auto; }
 
   /* Findings */
-  .findings { border-top: 1px solid var(--rule); }
+  .finding:first-child { padding-top: 0.25rem; }
   .finding {
     display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
     column-gap: var(--gap);
@@ -262,8 +275,8 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   .cred { margin-top: 0.625rem; max-width: 34ch; }
 
   /* Pulse */
-  .posts { border-top: 1px solid var(--rule); }
   .posts > li { border-bottom: 1px solid var(--rule); }
+  .posts > li:first-child .post { padding-top: 0.25rem; }
   .post { display: grid; grid-template-columns: 10rem minmax(0, 1fr); column-gap: var(--gap); row-gap: 0.5rem; padding: 1.5rem 0 1.75rem; }
   .post time { grid-row: 1 / span 2; padding-top: 0.35rem; }
   .post h3 { transition: color 180ms var(--ease); }
@@ -285,11 +298,12 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     .cols { grid-template-columns: 1fr; }
     .steps { grid-template-columns: 1fr 1fr; row-gap: 2.5rem; }
     .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .clients li { aspect-ratio: 3 / 2; padding: 1rem; }
+    .clients img { max-height: 100%; width: auto; max-width: 85%; }
     .close-mark { display: none; }
     .close-body { grid-column: 1 / -1; }
   }
   @media (max-width: 40rem) {
-    .lead { font-size: 1.125rem; }
     .service { grid-template-columns: minmax(0, 1fr) 1.5rem; }
     .deliverables { grid-column: 1; grid-row: auto; margin-top: 0.5rem; }
     :global(.service-arrow) { grid-column: 2; }

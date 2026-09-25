@@ -15,7 +15,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
         {posts.map((p) => (
           <li>
             <a class="post" href={`/pulse/${p.id}`}>
-              <time class="note muted" datetime={p.data.date.toISOString()}>{fmt.format(p.data.date)}</time>
+              <time class="note muted" datetime={p.data.date.toISOString()}>{fmt.format(p.data.date)}{p.data.placeholder && <><br />Placeholder [TO CONFIRM]</>}</time>
               <h2 class="sub">{p.data.title}</h2>
               <p class="muted">{p.data.description}</p>
             </a>

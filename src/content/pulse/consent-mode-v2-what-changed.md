@@ -3,6 +3,7 @@ title: "Consent Mode v2: what changed in your data"
 description: Since consent became a signal rather than a switch, part of your reporting is modelled. Leadership should know which part.
 date: 2026-08-21
 author: DataHustle
+placeholder: true
 ---
 
 *Placeholder article for design review. [TO CONFIRM]*

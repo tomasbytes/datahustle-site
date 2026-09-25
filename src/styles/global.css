@@ -29,7 +29,7 @@
 
   /* Brand type scale */
   --display: clamp(2.5rem, 1.35rem + 3.9vw, 4.5rem); /* hero only: 40 → 72px */
-  --h: clamp(2rem, 1.6rem + 1.3vw, 2.625rem); /* 42px */
+  --h: clamp(2.25rem, 1.95rem + 0.8vw, 2.625rem); /* 42px, 36px floor on phones */
   --sub: 1.375rem; /* 22px */
   --body: 1rem; /* 16 / 21 */
   --note: 0.75rem; /* 12 / 16 */
@@ -182,7 +182,7 @@ p { text-wrap: pretty; }
 
 /* Section frame: full-width top rule, heading in the left third. */
 .section { padding-block: var(--section) 0; }
-.section > .wrap > .grid { border-top: 1px solid var(--black); padding-top: 1.25rem; }
+.section > .wrap.grid { border-top: 1px solid var(--black); padding-top: 1.25rem; }
 .section-head { grid-column: 1 / span 4; padding-right: var(--gap); }
 .section-body { grid-column: 5 / -1; }
 @media (max-width: 60rem) {

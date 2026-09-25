@@ -19,9 +19,8 @@ const { title, intro } = Astro.props;
     font-size: clamp(2.5rem, 1.6rem + 3vw, 4rem);
     font-weight: 700; line-height: 1.04; letter-spacing: -0.03em;
   }
-  .intro { grid-column: 8 / -1; font-size: 1.25rem; line-height: 1.4; max-width: 30rem; }
+  .intro { grid-column: 8 / -1; max-width: 30rem; }
   @media (max-width: 60rem) {
     h1, .intro { grid-column: 1 / -1; }
-    .intro { font-size: 1.125rem; }
   }
 </style>

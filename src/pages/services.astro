@@ -56,8 +56,9 @@ import { SERVICES } from '../data/site.js';
   .toc ul { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; padding-block: 1.25rem; border-block: 1px solid var(--rule); }
   .body { display: grid; gap: 1.5rem; }
   .question { max-width: 30ch; }
-  .lead { font-size: 1.25rem; line-height: 1.4; max-width: 36rem; }
+  .lead { max-width: 36rem; }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem calc(var(--gap) * 2); margin-top: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+  .question { margin-top: 0.1rem; }
   .detail { display: grid; gap: 1rem; }
   .detail p { max-width: 38em; }
   .what { margin-bottom: 0.875rem; font-weight: 400; }
@@ -67,6 +68,5 @@ import { SERVICES } from '../data/site.js';
   .next { display: grid; gap: 1.5rem; justify-items: start; }
   @media (max-width: 40rem) {
     .cols { grid-template-columns: 1fr; }
-    .lead { font-size: 1.125rem; }
   }
 </style>

@@ -3,6 +3,7 @@ title: Most attribution models answer the wrong question
 description: Attribution tells you who was present when a sale happened. Budget decisions need to know what would have happened without the spend.
 date: 2026-09-10
 author: DataHustle
+placeholder: true
 ---
 
 *Placeholder article for design review. [TO CONFIRM]*

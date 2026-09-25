@@ -55,6 +55,21 @@ const pct = (v: number) => `${((v / SIZE) * 100).toFixed(2)}%`;
     <span class="muted">Gradient descent. Cauchy, 1847.</span>
   </figcaption>
 </figure>
+<script is:inline>
+  // Hold the draw until the figure is on screen (on phones it sits below the
+  // fold). Without JS the animation simply runs on load.
+  (function () {
+    var fig = document.currentScript.previousElementSibling;
+    if (!('IntersectionObserver' in window)) return;
+    var r = fig.getBoundingClientRect();
+    if (r.top < innerHeight * 0.6) return;
+    fig.setAttribute('data-wait', '');
+    var io = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) { fig.removeAttribute('data-wait'); io.disconnect(); }
+    }, { threshold: 0.4 });
+    io.observe(fig);
+  })();
+</script>
 
 <style>
   .descent { position: relative; margin: 0; width: 100%; aspect-ratio: 1; }
@@ -92,6 +107,8 @@ const pct = (v: number) => `${((v / SIZE) * 100).toFixed(2)}%`;
   .formula { font-family: var(--math); font-size: 0.9375rem; letter-spacing: 0; }
   .formula i { font-family: 'KaTeX Math', var(--math); }
   .formula sub { font-size: 0.7em; line-height: 0; }
+
+  .descent[data-wait] :is(.path, circle, .min, .leader), .descent[data-wait] figcaption { animation-play-state: paused; }
 
   @keyframes draw { to { stroke-dashoffset: 0; } }
   @keyframes mark { to { opacity: 1; transform: scale(1); } }

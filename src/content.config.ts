@@ -10,6 +10,8 @@ const pulse = defineCollection({
     date: z.coerce.date(),
     author: z.string().optional(),
     draft: z.boolean().default(false),
+    // Marks design-review stand-ins so listings label them.
+    placeholder: z.boolean().default(false),
   }),
 });
 
