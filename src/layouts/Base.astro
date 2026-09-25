@@ -10,10 +10,13 @@ interface Props {
   description?: string;
   image?: string;
   type?: 'website' | 'article';
+  noindex?: boolean;
 }
-const { title, description = SITE.description, image = '/og.png', type = 'website' } = Astro.props;
+const { title, description = SITE.description, image = '/og.png', type = 'website', noindex = false } = Astro.props;
 const fullTitle = title ? `${title} | DataHustle` : 'DataHustle | Intelligence & Innovation partner';
-const canonical = new URL(Astro.url.pathname, Astro.site);
+// Clean URLs (Netlify serves /services for services.html): match the sitemap.
+const cleanPath = Astro.url.pathname.replace(/(index)?\.html$/, '').replace(/(.)\/$/, '$1') || '/';
+const canonical = new URL(cleanPath, Astro.site);
 const ogImage = new URL(image, Astro.site);
 // Set PUBLIC_DISABLE_GTM=1 for preview builds hosted outside datahustle.ai.
 const gtmId = import.meta.env.PUBLIC_DISABLE_GTM ? '' : 'GTM-5MRKTKKR';
@@ -25,7 +28,7 @@ const gtmId = import.meta.env.PUBLIC_DISABLE_GTM ? '' : 'GTM-5MRKTKKR';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#f7f7f7" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
