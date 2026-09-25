@@ -24,7 +24,7 @@ html.has-xhair input:not([type='range']), html.has-xhair textarea { cursor: text
 .xhair.is-open .xh-h, .xhair.is-open .xh-v { scale: 1.6; }
 .xhair.flip-x .xh-l { left: auto; right: 14px; text-align: right; }
 .xhair.flip-y .xh-l { top: auto; bottom: 10px; }
-.xh-l { position: absolute; left: 14px; top: 10px; font: 400 10px/1.2 var(--mono); letter-spacing: 0; white-space: pre; font-variant-numeric: tabular-nums; }
+.xh-l { position: absolute; left: 14px; top: 10px; padding: 1px 3px; background: var(--bg); font: 400 10px/1.2 var(--mono); letter-spacing: 0; white-space: pre; font-variant-numeric: tabular-nums; }
 
 /* ---------- 1. the descent ---------- */
 .journey { position: relative; height: 520vh; margin-top: calc(-4.5rem - 1px); /* the stage runs under the header */ }
@@ -65,7 +65,7 @@ html.has-xhair input:not([type='range']), html.has-xhair textarea { cursor: text
 .descent-static .terrain { height: 100svh; }
 .descent-static .readout, .descent-static .scroll-cue, .descent-static .min-mark { display: none; }
 .descent-static .beats { position: relative; inset: auto; display: grid; gap: 30vh; padding: 0 var(--gutter) 20vh; }
-.descent-static .beat-hero { min-height: 100svh; align-content: end; padding: 6rem 0 clamp(2rem, 6vh, 4rem); }
+.descent-static .beat-hero { min-height: calc(100svh - 4.5rem - 1px); align-content: end; padding: 6rem 0 clamp(2rem, 6vh, 4rem); }
 .descent-static .beat { position: relative; left: auto; right: auto; top: auto; bottom: auto; width: auto; }
 .descent-static .beat-dark, .descent-static .beat-min { color: var(--black); }
 .descent-static .hint { display: none; }

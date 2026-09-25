@@ -14,10 +14,18 @@ export function mountCrosshair() {
   root.classList.add('has-xhair');
 
   let domain: { x: number; y: number } | null = null;
-  window.addEventListener('xhair:coords', (e) => { domain = (e as CustomEvent).detail; });
-
+  let last = { x: 0, y: 0 };
   const pad = (n: number) => String(Math.round(n)).padStart(4, '0');
+  const paint = () => {
+    label.textContent = domain
+      ? `x ${domain.x >= 0 ? ' ' : ''}${domain.x.toFixed(3)}  y ${domain.y >= 0 ? ' ' : ''}${domain.y.toFixed(3)}`
+      : `${pad(last.x)} · ${pad(last.y)}`;
+  };
+  // Repaint on coordinate changes too, so a still pointer never shows stale values.
+  window.addEventListener('xhair:coords', (e) => { domain = (e as CustomEvent).detail; paint(); });
+
   addEventListener('pointermove', (e) => {
+    last = { x: e.clientX, y: e.clientY };
     if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
     el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
     // Keep the label on-screen: flip it left near the right edge, up near the bottom.
@@ -27,9 +35,7 @@ export function mountCrosshair() {
     const field = t.closest('input, textarea, select');
     el.classList.toggle('is-hidden', !!field);
     el.classList.toggle('is-open', !field && !!t.closest('a, button, [role="slider"], input[type="range"], [data-toy-drag]'));
-    label.textContent = domain
-      ? `x ${domain.x >= 0 ? ' ' : ''}${domain.x.toFixed(3)}  y ${domain.y >= 0 ? ' ' : ''}${domain.y.toFixed(3)}`
-      : `${pad(e.clientX)} · ${pad(e.clientY)}`;
+    paint();
   }, { passive: true });
   document.addEventListener('pointerleave', () => el.classList.add('is-hidden'));
   document.addEventListener('pointerenter', () => el.classList.remove('is-hidden'));
