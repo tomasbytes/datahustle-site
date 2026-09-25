@@ -59,9 +59,8 @@ From DataHustle's brand book. These are binding.
 
 ## Evidence on Hand
 
-- Client logos: DataHustle has client logos it can show publicly. The files are not in the repo yet.
+- Client logos in `brand/clients/` (7, as supplied, approved for public use): Adecco, The Christmas Factory, Dreamstar Event Agency, All About Events, Koilakos Carpark, Easy Service Maragopoulos, OceanSouth. They come in mixed formats, colours and backgrounds, so the site needs a consistent treatment for them.
 - Brand book and assets in `brand/`: `DataHustle_BrandBook.pdf`; wordmark SVGs (`SVG_Primary_Black.svg`, `SVG_Primary_White.svg`) and PNGs; monogram SVGs (black, white, blue) and PNGs; 32px favicons (black, blue, white); gradient SVG, PDF and PNGs; Alfabet demo fonts (see Brand Commitments).
-- Client logo files are still not in the repo.
 - Not available and must not be invented: case studies or published results, testimonials, partner badges or certifications, metrics, or named team members.
 
 ## Product Principles
