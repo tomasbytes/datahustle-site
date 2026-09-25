@@ -39,7 +39,8 @@ export function contourLines(res = 180, tol = 0.0012) {
       }
       if (cur.length > 1) lines.push(cur);
     }
-    return { level: lv[k], lines: lines.map((l) => simplify(l, tol).map(([u, v]) => [+u.toFixed(4), +v.toFixed(4)])) };
+    const span = (l) => { const us = l.map((p) => p[0]), vs = l.map((p) => p[1]); return Math.max(Math.max(...us) - Math.min(...us), Math.max(...vs) - Math.min(...vs)); };
+    return { level: lv[k], lines: lines.filter((l) => span(l) > 0.01).map((l) => simplify(l, tol).map(([u, v]) => [+u.toFixed(4), +v.toFixed(4)])) };
   });
 }
 

@@ -193,6 +193,8 @@ export function mountInstrument(root: HTMLElement) {
     const whole = Math.floor(upto);
 
     // The path, drawn up to the current iterate (with the partial step).
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, size, size); ctx.clip();
     ctx.strokeStyle = INK;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -222,6 +224,7 @@ export function mountInstrument(root: HTMLElement) {
       ctx.fillStyle = BLUE;
       ctx.fillRect(Math.round(x - 6), Math.round(y - 6), 12, 12);
     }
+    ctx.restore();
   }
 
   // Pointer: crosshair and a precision readout beside the cursor.
@@ -249,8 +252,10 @@ export function mountInstrument(root: HTMLElement) {
     if (tilt >= 0.04) return;
     const r = canvas.getBoundingClientRect();
     const { u, v } = unproject(e.clientX - r.left, e.clientY - r.top);
+    // Keep the first strides inside the plot: start no closer than 8% to an edge.
+    const cl = (n: number) => Math.min(0.92, Math.max(0.08, n));
     hint.textContent = 'Descending from your point.';
-    startRun(fromUnit(u, v));
+    startRun(fromUnit(cl(u), cl(v)));
     window.dataLayer?.push({ event: 'instrument_descent' });
   }
   canvas.addEventListener('pointermove', onMove);

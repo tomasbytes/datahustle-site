@@ -112,6 +112,8 @@ if (kind === 'finding') {
   body += `<polyline class="draw before" pathLength="1" points="${pts(series.slice(0, cut))}"/>`;
   body += `<polyline class="draw after" pathLength="1" points="${pts(series.slice(cut - 1))}"/>`;
   body += `<path class="cut" d="M${X(xc).toFixed(1)},${Y(1)}V${Y(0)}"/>`;
+  body += `<text class="lbl" x="${(X(xc) - 6).toFixed(1)}" y="${Y(1) + 4}" text-anchor="end">Before</text>`;
+  body += `<text class="lbl" x="${(X(xc) + 6).toFixed(1)}" y="${Y(1) + 4}">After</text>`;
 }
 ---
 <figure class={`fig fig-${kind}`} data-reveal>
@@ -134,6 +136,7 @@ if (kind === 'finding') {
   svg :global(.live) { stroke: currentColor; }
   svg :global(.node) { fill: var(--paper); stroke: currentColor; stroke-width: 1.25; }
   svg :global(.opt) { fill: var(--blue); }
+  svg :global(.lbl) { fill: currentColor; font: 400 10px/1 var(--font); letter-spacing: 0.01em; vector-effect: none; }
   svg :global(.cut) { stroke: currentColor; stroke-width: 1; stroke-dasharray: 3 3; }
 
   /* Draw-in, armed only when JS runs and motion is welcome. */
@@ -151,9 +154,9 @@ if (kind === 'finding') {
     :global(html.js) .fig.is-on svg :global(.front) { animation-delay: 500ms; animation-duration: 900ms; }
     :global(html.js) .fig.is-on svg :global(.fpt) { animation: fig-fade 300ms var(--ease-out) calc(700ms + var(--i) * 90ms) forwards; }
     :global(html.js) .fig.is-on svg :global(.curve), :global(html.js) .fig.is-on svg :global(.curve-2) { animation-delay: calc(var(--i) * 160ms); animation-duration: 1000ms; }
-    :global(html.js) .fig.is-on svg :global(.tangent) { animation-delay: 1150ms; animation-duration: 500ms; }
-    :global(html.js) .fig.is-on svg :global(.opt) { animation: fig-fade 360ms var(--ease-out) 1500ms forwards; }
-    :global(html.js) .fig-pareto.is-on svg :global(.opt) { animation-delay: 1500ms; }
+    :global(html.js) .fig.is-on svg :global(.tangent) { animation-delay: 700ms; animation-duration: 400ms; }
+    :global(html.js) .fig.is-on svg :global(.opt) { animation: fig-fade 300ms var(--ease-out) 1000ms forwards; }
+    :global(html.js) .fig-pareto.is-on svg :global(.opt) { animation-delay: 1150ms; }
     :global(html.js) .fig.is-on svg :global(.live) { animation-delay: calc(var(--l) * 380ms); animation-duration: 520ms; }
     :global(html.js) .fig.is-on svg :global(.node) { animation: fig-node 1ms linear calc(var(--l) * 380ms) forwards; }
     :global(html.js) .fig.is-on svg :global(.before) { animation-duration: 700ms; }

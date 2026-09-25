@@ -211,6 +211,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
 <style>
   .page { position: relative; }
   .thread-anchor { display: block; height: 0; }
+  .method .thread-anchor { margin-top: clamp(3rem, 2.5rem + 3vw, 5.5rem); }
 
   /* Thread: one hairline in paper, inverted against whatever it crosses, so
      it reads black on paper and paper on the black section. */
@@ -223,6 +224,8 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   :global(html:not(.js)) .thread { display: none; }
 
   /* Hero */
+  /* Above the thread, so the thread passes under the instrument's panel. */
+  .hero-pin { position: relative; z-index: 6; }
   .hero-grid { align-items: center; padding-block: clamp(2rem, 5vh, 4rem) clamp(2.5rem, 6vh, 4.5rem); row-gap: 2.5rem; }
   .hero-text { grid-column: 1 / span 6; display: grid; gap: 1.75rem; justify-items: start; }
   h1 { font-size: var(--display); font-weight: 700; line-height: 1.02; letter-spacing: -0.03em; }
@@ -277,7 +280,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   .method {
     margin-top: var(--section);
     background: var(--black); color: var(--paper);
-    padding-block: clamp(4rem, 3rem + 5vw, 8rem) clamp(5rem, 4rem + 6vw, 9rem);
+    padding-block: clamp(4rem, 3rem + 5vw, 8rem) clamp(2rem, 1.5rem + 2vw, 3.5rem);
     --ink-2: #b9b9b9;
   }
   .method-head { align-items: end; row-gap: 1rem; }
@@ -287,7 +290,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   .step {
     grid-column: span 3; position: relative;
     display: grid; align-content: start; gap: 0.75rem;
-    padding-top: 1.75rem;
+    padding: 1.75rem 0 0 1.5rem; /* 24px clear of the thread's vertical */
     margin-top: calc(var(--i) * clamp(1.5rem, 4.5vw, 4.5rem));
   }
   .point {
@@ -297,7 +300,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   }
   .point:global(.is-lit) { background: var(--paper); }
   .point:global(.is-current) { background: var(--blue); border-color: var(--blue); scale: 1.25; }
-  .k { position: absolute; left: 1rem; top: -0.55rem; font-size: 0.75rem; color: #b9b9b9; }
+  .k { position: absolute; left: 1.5rem; top: -1.6rem; font-size: 0.75rem; color: #b9b9b9; }
   .k i { font-family: 'KaTeX Math', var(--math); font-size: 1.05em; }
   .num {
     font-size: clamp(4.5rem, 2rem + 8vw, 10rem); font-weight: 700; line-height: 0.82; letter-spacing: -0.045em;
@@ -374,7 +377,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   @media (max-width: 40rem) {
     .service { grid-template-columns: 1fr; }
     .service :global(.fig) { max-width: 20rem; }
-    .step { grid-column: 1 / -1; margin-top: 0; padding-left: 1.75rem; padding-top: 0; }
+    .step { grid-column: 1 / -1; margin-top: 0; padding: 0 0 0 1.75rem; }
     .point { left: 0; top: 0.55rem; }
     .k { position: static; }
     .logo { aspect-ratio: 3 / 2; padding: 1rem; }
@@ -382,5 +385,6 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     .people { grid-template-columns: 1fr; row-gap: 3rem; }
     .post { grid-template-columns: 1fr; }
     .post time { grid-row: auto; padding: 0; }
+    .chart-cap { flex-direction: column; gap: 0.2rem; }
   }
 </style>

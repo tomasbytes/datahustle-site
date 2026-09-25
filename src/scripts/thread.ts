@@ -9,7 +9,7 @@
 //   data-thread-route="hv"   reach this point horizontally first (default "vh")
 type P = { x: number; y: number; el?: HTMLElement; lit?: boolean };
 
-const R = 14; // corner radius
+const R = 0; // square, ruled turns
 
 export function mountThread(svg: SVGSVGElement) {
   const path = svg.querySelector('path')!;
@@ -41,7 +41,11 @@ export function mountThread(svg: SVGSVGElement) {
       const pinFinal = heroTop + hero.offsetHeight - pin.offsetHeight;
       const sr = stage.getBoundingClientRect(), pr = pin.getBoundingClientRect();
       const u = parseFloat(instrument.dataset.endU || '0.68'), v = parseFloat(instrument.dataset.endV || '0.72');
-      route.push({ x: sr.left - hostRect.left + u * sr.width, y: pinFinal + (sr.top - pr.top) + v * sr.height });
+      // Desktop: from the minimum itself (the map is flat again once the hero
+      // lets go). Narrow screens: from under the readout panel, because the
+      // map may still be tilted as it scrolls away.
+      const flatAtExit = matchMedia('(min-width: 60.01rem)').matches;
+      route.push({ x: sr.left - hostRect.left + u * sr.width, y: pinFinal + (sr.top - pr.top) + (flatAtExit ? v * sr.height : sr.height) });
     }
     for (const el of document.querySelectorAll<HTMLElement>('[data-thread-point]')) {
       const r = el.getBoundingClientRect();
