@@ -1,0 +1,394 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-25T10:40:31Z",
+  "title": "Design System: DataHustle",
+  "extensions": {
+    "colorMeta": {
+      "black": {
+        "role": "neutral",
+        "displayName": "Black",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#f7f7f7",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "intervention-blue": {
+        "role": "primary",
+        "displayName": "Intervention Blue",
+        "canonical": "oklch(49.9% 0.281 269.8)",
+        "tonalRamp": [
+          "#030034",
+          "#0f0174",
+          "#2002bc",
+          "#302bf8",
+          "#516ffe",
+          "#819efe",
+          "#b6c9fe",
+          "#e8eeff"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#4a4a4a",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline Rule",
+        "canonical": "rgb(0 0 0 / 0.14)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "contour": {
+        "role": "neutral",
+        "displayName": "Contour",
+        "canonical": "rgb(0 0 0 / 0.3)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      }
+    },
+    "gradients": [
+      {
+        "name": "depth-to-clarity-band",
+        "value": "linear-gradient(90deg, #3335ff, #f7f7f7)",
+        "purpose": "The footer band, 0.75rem tall, full width. The only gradient on the site."
+      }
+    ],
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Homepage hero headline only, 40 to 72px."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Every section heading; the brand's 42px Heading step with a 36px phone floor."
+      },
+      "title": {
+        "displayName": "Subheading",
+        "purpose": "Service, step, sector, founder and post titles; 22px SemiBold."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text, nav, links and buttons; 16px / 21px."
+      },
+      "label": {
+        "displayName": "Notes",
+        "purpose": "Margin notes, captions, dates, helper text, field errors; 12px / 16px."
+      },
+      "math": {
+        "displayName": "Math",
+        "purpose": "Notation only: the hero formula (15px) and k = n step indices (14px), italic variables in KaTeX Math."
+      }
+    },
+    "shadows": [],
+    "focus": [
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid #3335ff; outline-offset: 3px",
+        "purpose": "Global :focus-visible ring on every interactive element except form fields."
+      },
+      {
+        "name": "field-focus-input",
+        "value": "border-color: #3335ff; box-shadow: 0 1px 0 0 #3335ff",
+        "purpose": "Input bottom rule turns blue and thickens to 2px. A stroke, not elevation."
+      },
+      {
+        "name": "field-focus-textarea",
+        "value": "border-color: #3335ff; box-shadow: inset 0 0 0 1px #3335ff",
+        "purpose": "Textarea box turns blue and thickens to 2px."
+      },
+      {
+        "name": "field-error",
+        "value": "box-shadow: 0 2px 0 0 #000 (input); inset 0 0 0 1px #000 (textarea)",
+        "purpose": "Invalid fields thicken their black rule; the message carries a 6px blue square."
+      },
+      {
+        "name": "selection",
+        "value": "background: #3335ff; color: #f7f7f7",
+        "purpose": "Text selection."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.25, 0.1, 0.25, 1)",
+        "purpose": "Colour and border transitions (180ms)."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Movement: arrow advance (220ms), underline draw-in (240ms), button press (140ms), consent entry (240ms), descent marks. No overshoot."
+      },
+      {
+        "name": "link-hover",
+        "value": "color 180ms ease; arrow translateX(4px) 220ms ease-out",
+        "purpose": "Arrow links and ruled service rows, fine pointers only."
+      },
+      {
+        "name": "line-hover",
+        "value": "background-size 0 to 100% 1px, 240ms ease-out",
+        "purpose": "Underline draws in from the left on nav and utility links."
+      },
+      {
+        "name": "button-hover",
+        "value": "background/border to #3335ff 180ms ease; submit arrow translateX(3px) 220ms",
+        "purpose": "Solid and ghost buttons."
+      },
+      {
+        "name": "button-press",
+        "value": "scale(0.98) 140ms ease-out",
+        "purpose": ":active on buttons."
+      },
+      {
+        "name": "descent-draw",
+        "value": "stroke-dashoffset 1 to 0, 3200ms cubic-bezier(0.3, 0, 0.2, 1), 400ms delay",
+        "purpose": "The signature: the hero descent path draws in once."
+      },
+      {
+        "name": "descent-mark",
+        "value": "opacity 0 to 1, scale 0.6 to 1, 260ms ease-out, timed to the line reaching each iterate",
+        "purpose": "Iterate dots along the path."
+      },
+      {
+        "name": "descent-minimum",
+        "value": "opacity 0 to 1, scale 0.8 to 1, 420ms ease-out, at 400 + 3200 + 80ms",
+        "purpose": "The blue minimum square lands after the path."
+      },
+      {
+        "name": "descent-caption",
+        "value": "opacity 0 to 1, 400ms ease-out, at 600 + 3200ms",
+        "purpose": "Leader line and margin note."
+      },
+      {
+        "name": "descent-wait",
+        "value": "paused until 40% of the figure intersects, when its top starts below 60% of the viewport",
+        "purpose": "On phones the drawing waits until it is seen."
+      },
+      {
+        "name": "consent-enter",
+        "value": "@starting-style opacity 0, translateY(100%); 240ms ease-out",
+        "purpose": "Consent bar entry; fade only (200ms) under reduced motion."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Descent renders complete with no animation; smooth scroll off; consent bar fades only."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "40rem"
+      },
+      {
+        "name": "tablet",
+        "value": "60rem"
+      },
+      {
+        "name": "max",
+        "value": "90rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Arrow Link",
+      "kind": "custom",
+      "refersTo": "link-arrow",
+      "description": "The page call to action: SemiBold underlined text with a drawn arrow; turns blue and the arrow advances 4px on hover.",
+      "html": "<a class=\"ds-link\" href=\"#\">Request a strategy session <svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"square\" aria-hidden=\"true\"><path d=\"M2 8h11M9 4l4 4-4 4\"/></svg></a>",
+      "css": ".ds-link { display: inline-flex; align-items: center; gap: 0.5em; font: 600 16px/21px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: var(--black, #000); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.3em; transition: color 180ms cubic-bezier(0.25, 0.1, 0.25, 1); } .ds-link .ds-arrow { width: 0.9em; height: 0.9em; flex: none; transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-link:hover { color: var(--blue, #3335ff); } .ds-link:hover .ds-arrow { transform: translateX(4px); } .ds-link:focus-visible { outline: 2px solid var(--blue, #3335ff); outline-offset: 3px; }"
+    },
+    {
+      "name": "Underline Link",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Nav and utility links: no decoration at rest; a 1px underline draws in from the left on hover and holds on the current page.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-line\" href=\"#\" aria-current=\"page\">Services</a><a class=\"ds-line\" href=\"#\">Pulse</a><a class=\"ds-line\" href=\"#\">Contact</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 2.5rem; font: 400 16px/21px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; } .ds-line { color: var(--black, #000); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px; padding-bottom: 2px; transition: background-size 240ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-line:hover, .ds-line[aria-current='page'] { background-size: 100% 1px; } .ds-line:focus-visible { outline: 2px solid var(--blue, #3335ff); outline-offset: 3px; }"
+    },
+    {
+      "name": "Solid Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Form submission only: black, square, 48px; fills blue on hover, scales to 0.98 when pressed.",
+      "html": "<button class=\"ds-btn\" type=\"button\">Send request <svg class=\"ds-arrow\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"square\" aria-hidden=\"true\"><path d=\"M2 8h11M9 4l4 4-4 4\"/></svg></button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.6em; min-height: 3rem; padding: 0 1.4rem; border: 1px solid #000; border-radius: 0; background: #000; color: #f7f7f7; font: 600 16px/1 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; cursor: pointer; transition: background-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), border-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), transform 140ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn .ds-arrow { width: 1rem; height: 1rem; transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn:hover { background: #3335ff; border-color: #3335ff; } .ds-btn:hover .ds-arrow { transform: translateX(3px); } .ds-btn:active { transform: scale(0.98); } .ds-btn:focus-visible { outline: 2px solid #3335ff; outline-offset: 3px; } .ds-btn[disabled] { opacity: 0.6; cursor: progress; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Consent choices: transparent with a 1px black border; fills blue on hover.",
+      "html": "<button class=\"ds-btn-ghost\" type=\"button\">Accept</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 2.5rem; min-width: 6.5rem; padding: 0 1.4rem; border: 1px solid #000; border-radius: 0; background: transparent; color: #000; font: 600 16px/1 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; cursor: pointer; transition: background-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), border-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), transform 140ms cubic-bezier(0.23, 1, 0.32, 1); } .ds-btn-ghost:hover { background: #3335ff; border-color: #3335ff; color: #f7f7f7; } .ds-btn-ghost:active { transform: scale(0.98); } .ds-btn-ghost:focus-visible { outline: 2px solid #3335ff; outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Label above, a single 1px black bottom rule; blue 2px rule on focus; 3px black rule and a blue-square message on error.",
+      "html": "<div class=\"ds-field\"><label for=\"ds-f1\">Work email</label><input id=\"ds-f1\" type=\"email\" placeholder=\"\"/></div><div class=\"ds-field\"><label for=\"ds-f2\">Company</label><input id=\"ds-f2\" aria-invalid=\"true\"/><p class=\"ds-error\">Enter your company.</p></div>",
+      "css": ".ds-field { display: grid; gap: 0.5rem; margin-bottom: 1.75rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; max-width: 40rem; } .ds-field label { font: 600 16px/21px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; } .ds-field input { width: 100%; font: 400 1rem/1.4 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; background: transparent; border: 0; border-bottom: 1px solid #000; border-radius: 0; padding: 0.625rem 0; caret-color: #3335ff; transition: border-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 180ms cubic-bezier(0.25, 0.1, 0.25, 1); } .ds-field input:focus { outline: none; border-color: #3335ff; box-shadow: 0 1px 0 0 #3335ff; } .ds-field input[aria-invalid='true'] { border-color: #000; box-shadow: 0 2px 0 0 #000; } .ds-error { margin: 0; font: 600 12px/16px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; letter-spacing: 0.01em; } .ds-error::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 0.5rem; background: #3335ff; vertical-align: 1px; }"
+    },
+    {
+      "name": "Textarea",
+      "kind": "input",
+      "refersTo": "textarea-field",
+      "description": "The challenge field: a full 1px black box, square; 2px blue on focus.",
+      "html": "<div class=\"ds-area\"><label for=\"ds-t\">What's your challenge?</label><textarea id=\"ds-t\" rows=\"4\"></textarea><p class=\"ds-help\">Two or three sentences is enough.</p></div>",
+      "css": ".ds-area { display: grid; gap: 0.5rem; max-width: 40rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; } .ds-area label { font: 600 16px/21px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; } .ds-area textarea { font: 400 1rem/1.4 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; background: transparent; border: 1px solid #000; border-radius: 0; padding: 0.75rem; min-height: 8rem; resize: vertical; caret-color: #3335ff; transition: border-color 180ms cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 180ms cubic-bezier(0.25, 0.1, 0.25, 1); } .ds-area textarea:focus { outline: none; border-color: #3335ff; box-shadow: inset 0 0 0 1px #3335ff; } .ds-help { margin: 0; font: 400 12px/16px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; letter-spacing: 0.01em; color: #4a4a4a; }"
+    },
+    {
+      "name": "Section Frame",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Every section: black top rule, heading in columns 1-4, body in 5-12, items as hairline-ruled rows.",
+      "html": "<section class=\"ds-frame\"><h2 class=\"ds-h\">Four disciplines, one system.</h2><ul class=\"ds-rows\"><li><h3 class=\"ds-sub\">Data &amp; measurement architecture</h3><p class=\"ds-muted\">Can you trust the numbers you decide on?</p></li><li><h3 class=\"ds-sub\">AI &amp; data solutions</h3><p class=\"ds-muted\">Where can a model make a better decision than a rule?</p></li></ul></section>",
+      "css": ".ds-frame { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 1.5rem; border-top: 1px solid #000; padding-top: 1.25rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; } .ds-h { grid-column: 1 / span 4; margin: 0; padding-right: 1.5rem; font-size: 42px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; } .ds-rows { grid-column: 5 / -1; list-style: none; margin: 0; padding: 0; } .ds-rows li { padding: 1.5rem 0 1.75rem; border-bottom: 1px solid rgb(0 0 0 / 0.14); display: grid; gap: 0.5rem; } .ds-rows li:first-child { padding-top: 0.25rem; } .ds-sub { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; } .ds-muted { margin: 0; color: #4a4a4a; font-size: 16px; line-height: 21px; }"
+    },
+    {
+      "name": "Iteration Step",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Method steps indexed as k = n in the maths face, led by a 7px black square.",
+      "html": "<div class=\"ds-step\"><span class=\"ds-k\"><i>k</i> = 1</span><h3>Measure</h3><p>Establish a baseline you can trust. Audit the data, fix what is broken, agree the metrics that matter.</p></div>",
+      "css": ".ds-step { display: grid; gap: 0.625rem; max-width: 16rem; font-family: 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; } .ds-k { display: flex; align-items: center; gap: 0.5rem; font-family: 'KaTeX Main', 'Cambria Math', 'STIX Two Math', 'Times New Roman', serif; font-size: 0.875rem; } .ds-k::before { content: ''; width: 7px; height: 7px; background: #000; flex: none; } .ds-step h3 { margin: 0; font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; } .ds-step p { margin: 0; color: #4a4a4a; font-size: 16px; line-height: 21px; }"
+    },
+    {
+      "name": "Descent Strip",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "The miniature descent: dots converging on the blue minimum square. Closes the homepage and heads the form success state.",
+      "html": "<svg class=\"ds-strip\" viewBox=\"0 0 120 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M1 12H119\" stroke=\"#000\" stroke-opacity=\".3\"/><circle cx=\"6\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"50\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"78\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"94\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"103\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><circle cx=\"108\" cy=\"12\" r=\"2.5\" fill=\"#000\"/><rect x=\"108\" y=\"6.5\" width=\"11\" height=\"11\" fill=\"#3335ff\"/></svg>",
+      "css": ".ds-strip { display: block; width: 8rem; height: auto; }"
+    },
+    {
+      "name": "Consent Bar",
+      "kind": "custom",
+      "refersTo": "consent-bar",
+      "description": "Fixed bottom bar on paper with a black top rule and two equal ghost buttons; slides up 240ms on entry.",
+      "html": "<section class=\"ds-consent\"><p><b>Cookies.</b> We use analytics cookies to understand how this site is used. They load only if you accept.</p><div class=\"ds-actions\"><button class=\"ds-btn-ghost\" type=\"button\">Accept</button><button class=\"ds-btn-ghost\" type=\"button\">Reject</button></div></section>",
+      "css": ".ds-consent { display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding: 0.875rem 1.5rem; background: #f7f7f7; border-top: 1px solid #000; font: 400 16px/21px 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif; color: #000; } .ds-consent p { margin: 0; } .ds-consent b { font-weight: 600; } .ds-actions { display: flex; gap: 0.5rem; flex: none; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Redlined Proof",
+    "overview": "The site reads as a business system under expert review. Off-white paper, black type and hairline rules on a strict 12-column grid do all the structural work; nothing is filled, lifted or rounded. Growth is treated as an optimization problem, and the only colour on the page is the reviewer's mark: a small blue square at the point of intervention. The signature is a real gradient-descent drawing (Cauchy, 1847), computed at build time from a curved valley function, whose path draws in once and ends in that blue square.\n\nDensity is calm and editorial. Sections open with a full-width black rule and set their heading in the left third, their content in the right two thirds. Lists are ruled rows, never cards. Mathematics appears as notation and diagram, used sparingly (the hero drawing, the `k = 1…n` iteration markers, the closing descent strip), never as decoration for its own sake. This follows PRODUCT.md's binding brand commitments: authoritative, precise, restrained, with mathematical and geometric logic; strict grid; no shadows and no decorative effects; emphasis by SemiBold weight only, never colour.\n\nThe system refuses the agency default: hero slogan over a stock image, service cards, logo carousels, gradient CTAs, eyebrow labels above headings.",
+    "keyCharacteristics": [
+      "Off-white paper, black type, hairline rules; one accent colour used as markup, not decoration.",
+      "Strict 12-column grid; section frame of black top rule, heading in columns 1–4, body in 5–12.",
+      "Four-step brand type scale plus one hero display size and a maths face for notation.",
+      "Zero radius, zero fills, zero elevation. Structure comes from rules and alignment.",
+      "One motion signature (the descent path drawing in) and quiet, bounce-free hover responses.",
+      "Small black squares as list and step markers; the blue square is reserved for the minimum."
+    ],
+    "rules": [
+      {
+        "name": "The Reviewer's Pen Rule",
+        "body": "Blue is markup, not paint. If a blue element is not marking an intervention point, responding to the pointer or keyboard, or flagging an error, it does not exist.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Band Rule",
+        "body": "The gradient appears once per page, as the footer band. Never as a fill, a button, a heading treatment or a section background.",
+        "section": "colors"
+      },
+      {
+        "name": "The Weight-Not-Hue Rule",
+        "body": "Emphasis is SemiBold (600). Colour never carries emphasis; blue appears on hover because the element is interactive, not because it is important.",
+        "section": "colors"
+      },
+      {
+        "name": "The Four Steps Rule",
+        "body": "Outside the hero, text uses the brand's four steps (42 / 22 / 16 / 12). The 72px display belongs to the homepage hero alone.",
+        "section": "typography"
+      },
+      {
+        "name": "The Notation Rule",
+        "body": "The maths face appears only on real notation: a formula, an iteration index, a variable. Never on words.",
+        "section": "typography"
+      },
+      {
+        "name": "The Left-Third Rule",
+        "body": "A section's heading lives in columns 1–4 and its content in 5–12. New sections take the same frame rather than inventing a centred or full-bleed layout.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper Rule",
+        "body": "Everything sits on one sheet. A surface is never lifted, filled or tinted to separate it; draw a rule instead.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do build every section on the frame: 1px black top rule, heading in columns 1–4, body in 5–12, fluid section spacing between frames.",
+      "Do separate items with hairline rules (rgb(0 0 0 / 0.14)) and ruled rows or ruled cells.",
+      "Do use Intervention Blue (#3335ff) only for the minimum square, link and button hover, focus ring, selection, caret and field focus, and the error marker.",
+      "Do make the page's call to action an arrow text link; keep buttons for form submission and consent.",
+      "Do keep text to the brand steps: 42px Bold / 1.1 headings, 22px SemiBold / 1.2 subheadings, 16px / 21px body, 12px / 16px notes. The 40→72px display is for the homepage hero only.",
+      "Do emphasise with SemiBold (600) weight.",
+      "Do keep hover responses to colour shifts, underline draw-ins and a 3–4px arrow advance, at 180–240ms on the standard or ease-out curves, gated to fine pointers.",
+      "Do honour `prefers-reduced-motion`: the descent drawing renders complete, smooth scroll turns off, the consent bar only fades.",
+      "Do keep maths motifs real and sparse: a computed drawing, a true formula, iteration indices, the descent strip as a closing divider."
+    ],
+    "donts": [
+      "Don't use cards, filled panels or tinted surfaces to group content.",
+      "Don't use shadows, glows or blur for depth; a box-shadow may only thicken a field stroke.",
+      "Don't round corners. Radius is 0 everywhere.",
+      "Don't use colour for emphasis, including blue text for \"important\" words or grey for emphasis.",
+      "Don't place eyebrows, kickers or small labels above headings; the section rule and heading carry the hierarchy.",
+      "Don't use the gradient anywhere but the footer band.",
+      "Don't add a second animated signature, scroll-triggered reveals, parallax or any easing with overshoot or bounce.",
+      "Don't add decorative icons, illustrations or glyph icons; the drawn arrow and the square markers are the whole vocabulary.",
+      "Don't add a second blue mark in the first viewport; the minimum square is the only one on screen there."
+    ]
+  }
+}
