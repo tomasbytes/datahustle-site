@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import Arrow from '../../components/Arrow.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('pulse', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Base title={post.data.title} description={post.data.description} type="article">
+  <article class="wrap grid article">
+    <header class="meta">
+      <a class="line back" href="/pulse">Pulse</a>
+      <p class="note muted">
+        <time datetime={post.data.date.toISOString()}>{fmt.format(post.data.date)}</time>
+        {post.data.author && <><br />{post.data.author}</>}
+      </p>
+    </header>
+    <div class="main">
+      <h1>{post.data.title}</h1>
+      <p class="standfirst">{post.data.description}</p>
+      <div class="prose">
+        <Content />
+      </div>
+      <a class="link more" href="/contact">Discuss this with us <Arrow /></a>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .article { padding-top: clamp(3rem, 2rem + 4vw, 6rem); row-gap: 2rem; }
+  .meta { grid-column: 1 / span 3; display: grid; gap: 1rem; align-content: start; position: sticky; top: 6.5rem; align-self: start; }
+  .back { justify-self: start; }
+  .main { grid-column: 5 / span 7; }
+  h1 { font-size: clamp(2rem, 1.5rem + 2vw, 2.625rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .standfirst { margin-top: 1.25rem; font-size: 1.25rem; line-height: 1.4; }
+  .prose { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--black); max-width: 40rem; font-size: 1.0625rem; line-height: 1.55; }
+  .prose :global(p), .prose :global(ul), .prose :global(ol) { margin-block: 0 1.1em; }
+  .prose :global(h2) { font-size: var(--sub); font-weight: 600; line-height: 1.2; margin: 2.25rem 0 0.75rem; }
+  .prose :global(ul) { display: grid; gap: 0.5rem; }
+  .prose :global(ul li) { padding-left: 1rem; position: relative; }
+  .prose :global(ul li)::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 5px; height: 5px; background: #000; }
+  .prose :global(ol) { list-style: decimal; padding-left: 1.25rem; }
+  .prose :global(a) { text-decoration: underline; text-underline-offset: 0.2em; }
+  .prose :global(a:hover) { color: var(--blue); }
+  .prose :global(em) { color: var(--ink-2); }
+  .more { margin-top: 2rem; }
+  @media (max-width: 60rem) {
+    .meta, .main { grid-column: 1 / -1; }
+    .meta { position: static; display: flex; justify-content: space-between; align-items: baseline; }
+  }
+</style>

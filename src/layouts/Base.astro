@@ -1,0 +1,100 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Consent from '../components/Consent.astro';
+import { SITE } from '../data/site.js';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+const { title, description = SITE.description, image = '/og.png', type = 'website' } = Astro.props;
+const fullTitle = title ? `${title} | DataHustle` : 'DataHustle | Intelligence & Innovation partner';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+// Set PUBLIC_DISABLE_GTM=1 for preview builds hosted outside datahustle.ai.
+const gtmId = import.meta.env.PUBLIC_DISABLE_GTM ? '' : 'GTM-5MRKTKKR';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#f7f7f7" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href="/fonts/schibsted-grotesk-latin-var.woff2" as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="DataHustle" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'DataHustle',
+      url: SITE.url,
+      email: SITE.email,
+      logo: new URL('/apple-touch-icon.png', Astro.site).href,
+      address: { '@type': 'PostalAddress', addressLocality: 'Athens', addressCountry: 'GR' },
+    })} />
+
+    <!-- Consent Mode v2: everything denied until the visitor accepts. GTM loads only after consent. -->
+    <script is:inline define:vars={{ gtmId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500,
+      });
+      var KEY = 'dh-consent';
+      var loaded = false;
+      function loadGtm() {
+        if (loaded || !gtmId) return;
+        loaded = true;
+        dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId;
+        document.head.appendChild(s);
+      }
+      function apply(choice) {
+        var v = choice === 'granted' ? 'granted' : 'denied';
+        gtag('consent', 'update', { ad_storage: v, ad_user_data: v, ad_personalization: v, analytics_storage: v });
+        if (v === 'granted') loadGtm();
+      }
+      window.dhConsent = {
+        get: function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } },
+        set: function (choice) { try { localStorage.setItem(KEY, choice); } catch (e) {} apply(choice); },
+      };
+      var stored = window.dhConsent.get();
+      if (stored) apply(stored);
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <Consent />
+  </body>
+</html>

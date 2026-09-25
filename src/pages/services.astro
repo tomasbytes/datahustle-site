@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Arrow from '../components/Arrow.astro';
+import { SERVICES } from '../data/site.js';
+---
+<Base title="Services" description="Data and measurement architecture, AI and data solutions, performance media and strategy consulting, built as one system.">
+  <PageHead
+    title="Four disciplines, one system."
+    intro="Each discipline works on its own. They work best together, because every decision depends on the same data."
+  />
+
+  <nav class="wrap toc" aria-label="Services on this page">
+    <ul>
+      {SERVICES.map((s) => <li><a class="line" href={`#${s.id}`}>{s.title}</a></li>)}
+    </ul>
+  </nav>
+
+  {SERVICES.map((s) => (
+    <section class="section service" id={s.id} aria-labelledby={`${s.id}-title`}>
+      <div class="wrap grid">
+        <div class="section-head">
+          <h2 id={`${s.id}-title`} class="h">{s.title}</h2>
+        </div>
+        <div class="section-body body">
+          <p class="sub question">{s.question}</p>
+          <p class="lead">{s.summary}</p>
+          <div class="cols">
+            <div class="detail">
+              {s.detail.map((p) => <p>{p}</p>)}
+            </div>
+            <div>
+              <h3 class="note muted what">What we deliver <span>[TO CONFIRM]</span></h3>
+              <ul class="deliverables">
+                {s.deliverables.map((d) => <li>{d}</li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="section">
+    <div class="wrap grid">
+      <h2 class="h section-head">Not sure where to start?</h2>
+      <div class="section-body next">
+        <p class="lead">Most engagements begin with one question. Tell us yours, and we will propose where to look first.</p>
+        <a class="link" href="/contact">Request a strategy session <Arrow /></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .toc ul { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; padding-block: 1.25rem; border-block: 1px solid var(--rule); }
+  .body { display: grid; gap: 1.5rem; }
+  .question { max-width: 30ch; }
+  .lead { font-size: 1.25rem; line-height: 1.4; max-width: 36rem; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem calc(var(--gap) * 2); margin-top: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+  .detail { display: grid; gap: 1rem; }
+  .detail p { max-width: 38em; }
+  .what { margin-bottom: 0.875rem; font-weight: 400; }
+  .deliverables { display: grid; gap: 0.5rem; }
+  .deliverables li { padding-left: 1rem; position: relative; }
+  .deliverables li::before { content: ''; position: absolute; left: 0; top: 0.5em; width: 5px; height: 5px; background: #000; }
+  .next { display: grid; gap: 1.5rem; justify-items: start; }
+  @media (max-width: 40rem) {
+    .cols { grid-template-columns: 1fr; }
+    .lead { font-size: 1.125rem; }
+  }
+</style>

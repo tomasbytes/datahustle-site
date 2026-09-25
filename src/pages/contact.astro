@@ -1,0 +1,189 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Arrow from '../components/Arrow.astro';
+import { SITE } from '../data/site.js';
+---
+<Base title="Request a strategy session" description="Tell DataHustle what you are trying to solve. We reply with a proposed agenda for a strategy session.">
+  <PageHead
+    title="Request a strategy session."
+    intro="Tell us what you are trying to solve. We reply within two working days with a proposed agenda. [TO CONFIRM]"
+  />
+
+  <section class="wrap grid contact">
+    <aside class="aside">
+      <p class="sub">What happens next</p>
+      <ol class="next">
+        <li><span class="k note" aria-hidden="true"><i>k</i> = 1</span><p>We read your note and check we are the right people for it.</p></li>
+        <li><span class="k note" aria-hidden="true"><i>k</i> = 2</span><p>We send a short agenda and two or three questions.</p></li>
+        <li><span class="k note" aria-hidden="true"><i>k</i> = 3</span><p>We meet for a focused session with the people who would do the work.</p></li>
+      </ol>
+      <p class="note muted">[TO CONFIRM] Process steps. Prefer email? <a class="line" href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+    </aside>
+
+    <div class="form-col">
+      <form
+        name="strategy-session"
+        method="POST"
+        action="/contact?sent=1"
+        data-netlify="true"
+        netlify-honeypot="company-website"
+        novalidate
+        data-form
+      >
+        <input type="hidden" name="form-name" value="strategy-session" />
+        <p class="hp" aria-hidden="true">
+          <label>Leave this empty <input name="company-website" tabindex="-1" autocomplete="off" /></label>
+        </p>
+
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="e-name" />
+          <p class="error note" id="e-name" data-error hidden>Enter your name.</p>
+        </div>
+        <div class="field">
+          <label for="f-company">Company</label>
+          <input id="f-company" name="company" type="text" autocomplete="organization" required maxlength="160" aria-describedby="e-company" />
+          <p class="error note" id="e-company" data-error hidden>Enter your company.</p>
+        </div>
+        <div class="field">
+          <label for="f-email">Work email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="200" aria-describedby="e-email" />
+          <p class="error note" id="e-email" data-error hidden>Enter an email address like name@company.com.</p>
+        </div>
+        <div class="field">
+          <label for="f-challenge">What's your challenge?</label>
+          <textarea id="f-challenge" name="challenge" rows="5" required maxlength="1000" aria-describedby="h-challenge e-challenge"></textarea>
+          <p class="note muted" id="h-challenge">Two or three sentences is enough.</p>
+          <p class="error note" id="e-challenge" data-error hidden>Tell us briefly what you would like to solve.</p>
+        </div>
+
+        <div class="submit">
+          <button class="button" type="submit" data-submit>
+            <span data-label>Send request</span>
+            <Arrow class="btn-arrow" />
+          </button>
+          <p class="note muted">We use your details only to reply to this request.</p>
+        </div>
+        <p class="form-error" role="alert" data-form-error hidden>
+          The request did not go through. Check your connection and try again, or email us at <a class="line" href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+        </p>
+      </form>
+
+      <div class="sent" data-sent hidden tabindex="-1">
+        <svg class="sent-mark" viewBox="0 0 120 24" fill="none" aria-hidden="true">
+          <path d="M1 12H119" stroke="#000" stroke-opacity=".3" />
+          {[0, 44, 72, 88, 97, 102].map((x) => <circle cx={x + 6} cy="12" r="2.5" fill="#000" />)}
+          <rect x="108" y="6.5" width="11" height="11" fill="#3335ff" />
+        </svg>
+        <h2 class="h">Request received.</h2>
+        <p class="lead">Thank you. We will reply within two working days with a proposed agenda. [TO CONFIRM]</p>
+        <a class="link" href="/">Back to the homepage <Arrow /></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  const sent = document.querySelector<HTMLElement>('[data-sent]');
+  const formError = document.querySelector<HTMLElement>('[data-form-error]');
+  const button = document.querySelector<HTMLButtonElement>('[data-submit]');
+  const label = document.querySelector<HTMLElement>('[data-label]');
+
+  const showSent = () => {
+    if (!form || !sent) return;
+    form.hidden = true;
+    sent.hidden = false;
+    sent.focus();
+  };
+  // No-JS fallback lands on /contact?sent=1 after Netlify processes the post.
+  if (new URLSearchParams(location.search).has('sent')) showSent();
+
+  const validate = (field: HTMLInputElement | HTMLTextAreaElement) => {
+    const error = field.parentElement?.querySelector<HTMLElement>('[data-error]');
+    const ok = field.value.trim() !== '' && field.checkValidity();
+    field.setAttribute('aria-invalid', String(!ok));
+    if (error) error.hidden = ok;
+    return ok;
+  };
+
+  if (form) {
+    const fields = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[required]')];
+    // Validate on leaving a field, and re-check as the visitor corrects it.
+    fields.forEach((f) => {
+      f.addEventListener('blur', () => { if (f.value) validate(f); });
+      f.addEventListener('input', () => { if (f.getAttribute('aria-invalid') === 'true') validate(f); });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (formError) formError.hidden = true;
+      const invalid = fields.filter((f) => !validate(f));
+      if (invalid.length) { invalid[0].focus(); return; }
+
+      button!.disabled = true;
+      label!.textContent = 'Sending…';
+      try {
+        const body = new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString();
+        const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+        if (!res.ok) throw new Error(String(res.status));
+        (window as any).dataLayer = (window as any).dataLayer || [];
+        (window as any).dataLayer.push({ event: 'form_submit', form_name: 'strategy-session' });
+        showSent();
+      } catch {
+        if (formError) formError.hidden = false;
+        button!.disabled = false;
+        label!.textContent = 'Send request';
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact { padding-bottom: 1rem; row-gap: 3rem; }
+  .aside { grid-column: 1 / span 4; display: grid; gap: 1.5rem; align-content: start; padding-top: 1.25rem; border-top: 1px solid var(--black); }
+  .next { display: grid; gap: 1.25rem; }
+  .next li { display: grid; gap: 0.25rem; }
+  .next p { max-width: 30ch; }
+  .k { font-family: var(--math); font-size: 0.875rem; }
+  .k i { font-family: 'KaTeX Math', var(--math); }
+
+  .form-col { grid-column: 6 / -1; border-top: 1px solid var(--black); padding-top: 1.25rem; }
+  form { display: grid; gap: 1.75rem; max-width: 40rem; }
+  .hp { position: absolute; left: -9999px; }
+  .field { display: grid; gap: 0.5rem; }
+  label { font-weight: 600; }
+  input, textarea {
+    width: 100%;
+    font: 400 1rem/1.4 var(--font);
+    color: var(--black);
+    background: transparent;
+    border: 0; border-bottom: 1px solid var(--black); border-radius: 0;
+    padding: 0.625rem 0;
+    transition: border-color 180ms var(--ease), box-shadow 180ms var(--ease);
+    caret-color: var(--blue);
+  }
+  textarea { resize: vertical; min-height: 8rem; border: 1px solid var(--black); padding: 0.75rem; }
+  input:focus, textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 1px 0 0 var(--blue); }
+  textarea:focus { box-shadow: inset 0 0 0 1px var(--blue); }
+  input:focus-visible, textarea:focus-visible { outline: none; }
+  [aria-invalid='true'] { border-color: var(--black); box-shadow: 0 2px 0 0 var(--black); }
+  textarea[aria-invalid='true'] { box-shadow: inset 0 0 0 1px var(--black); }
+  .error { font-weight: 600; }
+  .error::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 0.5rem; background: var(--blue); vertical-align: 1px; }
+
+  .submit { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 1.5rem; }
+  .button :global(.btn-arrow) { width: 1rem; height: 1rem; transition: transform 220ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .button:hover :global(.btn-arrow) { transform: translateX(3px); } }
+  .form-error { padding: 1rem; border: 1px solid var(--black); max-width: 40rem; }
+
+  .sent { display: grid; gap: 1.25rem; justify-items: start; max-width: 40rem; outline: none; }
+  .sent-mark { width: 8rem; height: auto; margin-bottom: 0.5rem; }
+  .lead { font-size: 1.25rem; line-height: 1.4; }
+
+  @media (max-width: 60rem) {
+    .aside, .form-col { grid-column: 1 / -1; }
+    .form-col { order: -1; }
+  }
+</style>

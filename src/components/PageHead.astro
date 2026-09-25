@@ -1,0 +1,27 @@
+---
+// Opening block for inner pages: title in the left third, intro to the right.
+interface Props { title: string; intro?: string }
+const { title, intro } = Astro.props;
+---
+<section class="page-head">
+  <div class="wrap grid">
+    <h1>{title}</h1>
+    {intro && <p class="intro">{intro}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-head { padding-block: clamp(3rem, 2rem + 5vw, 7rem) clamp(2.5rem, 2rem + 3vw, 5rem); }
+  .grid { align-items: end; row-gap: 1.5rem; }
+  h1 {
+    grid-column: 1 / span 7;
+    font-size: clamp(2.5rem, 1.6rem + 3vw, 4rem);
+    font-weight: 700; line-height: 1.04; letter-spacing: -0.03em;
+  }
+  .intro { grid-column: 8 / -1; font-size: 1.25rem; line-height: 1.4; max-width: 30rem; }
+  @media (max-width: 60rem) {
+    h1, .intro { grid-column: 1 / -1; }
+    .intro { font-size: 1.125rem; }
+  }
+</style>

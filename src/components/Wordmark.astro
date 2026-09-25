@@ -1,0 +1,10 @@
+---
+// The primary mark, drawn from brand/SVG_Primary_Black.svg (outlined Alfabet).
+import mark from '../assets/wordmark.json';
+interface Props { class?: string; title?: string }
+const { class: cls, title = 'DataHustle' } = Astro.props;
+const [, , w, h] = mark.viewBox.split(' ').map(Number);
+---
+<svg class={cls} viewBox={mark.viewBox} style={`aspect-ratio:${w}/${h}`} fill="currentColor" role="img" aria-label={title}>
+  {mark.paths.map((d) => <path d={d} />)}
+</svg>

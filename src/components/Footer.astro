@@ -1,0 +1,41 @@
+---
+import Wordmark from './Wordmark.astro';
+import { NAV, SITE } from '../data/site.js';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap grid">
+    <a href="/" class="home" aria-label="DataHustle, home"><Wordmark class="wordmark" /></a>
+    <p class="about muted">An intelligence and innovation partner. Data, measurement, AI and performance media for decision-makers.</p>
+    <ul class="nav">
+      {NAV.map((item) => <li><a class="line" href={item.href}>{item.label}</a></li>)}
+    </ul>
+    <div class="contact">
+      <a class="line" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <p class="muted">{SITE.location}</p>
+    </div>
+    <div class="legal note muted">
+      <span>© {year} DataHustle</span>
+      <button type="button" class="line consent-open" data-consent-open>Cookie settings</button>
+    </div>
+  </div>
+  <div class="band" aria-hidden="true"></div>
+</footer>
+
+<style>
+  .site-footer { margin-top: var(--section); border-top: 1px solid var(--black); }
+  .grid { padding-block: 2.5rem 3rem; row-gap: 2rem; }
+  .home { grid-column: 1 / span 3; align-self: start; }
+  .home :global(.wordmark) { height: 1.35rem; width: auto; max-width: none; }
+  .about { grid-column: 5 / span 3; max-width: 30ch; }
+  .nav { grid-column: 9 / span 2; display: grid; gap: 0.5rem; justify-items: start; }
+  .contact { grid-column: 11 / -1; display: grid; gap: 0.5rem; justify-items: start; }
+  .legal { grid-column: 1 / -1; display: flex; gap: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); }
+  .consent-open { border: 0; margin: 0; padding: 0 0 2px; font: inherit; color: inherit; cursor: pointer; background-color: transparent; }
+  /* The brand gradient, used once: a band at the foot of the composition. */
+  .band { height: 0.75rem; background: linear-gradient(90deg, var(--blue), var(--paper)); }
+  @media (max-width: 60rem) {
+    .home, .about, .nav, .contact { grid-column: 1 / -1; }
+    .nav { display: flex; gap: 1.5rem; }
+  }
+</style>

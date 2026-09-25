@@ -1,0 +1,49 @@
+---
+// Cookie consent. Google Consent Mode v2 defaults are set in <head> (Base.astro);
+// GTM itself loads only after the visitor accepts.
+---
+<section class="consent" data-consent hidden aria-label="Cookie consent">
+  <div class="wrap inner">
+    <p><b>Cookies.</b> We use analytics cookies to understand how this site is used. They load only if you accept.</p>
+    <div class="actions">
+      <button type="button" class="button" data-consent-choice="granted">Accept</button>
+      <button type="button" class="button ghost" data-consent-choice="denied">Reject</button>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var panel = document.querySelector('[data-consent]');
+    if (!panel) return;
+    if (!(window.dhConsent && window.dhConsent.get())) panel.hidden = false;
+    panel.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-consent-choice]');
+      if (!btn) return;
+      window.dhConsent.set(btn.getAttribute('data-consent-choice'));
+      panel.hidden = true;
+    });
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-consent-open]')) { panel.hidden = false; panel.querySelector('button').focus(); }
+    });
+  })();
+</script>
+
+<style>
+  .consent {
+    position: fixed; z-index: 40; left: 0; right: 0; bottom: 0;
+    background: var(--paper);
+    border-top: 1px solid var(--black);
+    transition: opacity 240ms var(--ease-out), transform 240ms var(--ease-out);
+    @starting-style { opacity: 0; transform: translateY(100%); }
+  }
+  .consent[hidden] { display: none; }
+  .inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding-block: 0.875rem; }
+  .actions { display: flex; gap: 0.5rem; flex: none; }
+  .actions .button { min-height: 2.5rem; min-width: 6.5rem; }
+  @media (max-width: 40rem) {
+    .inner { flex-direction: column; align-items: stretch; }
+    .actions .button { flex: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .consent { transition: opacity 200ms ease; @starting-style { transform: none; } } }
+</style>

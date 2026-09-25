@@ -1,0 +1,8 @@
+---
+// Drawn arrow for links: one 1.5px stroke, square caps, like the rest of the linework.
+interface Props { class?: string }
+const { class: cls = 'arrow' } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true">
+  <path d="M2 8h11M9 4l4 4-4 4" />
+</svg>

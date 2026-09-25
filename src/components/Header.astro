@@ -1,0 +1,47 @@
+---
+import Wordmark from './Wordmark.astro';
+import Arrow from './Arrow.astro';
+import { NAV } from '../data/site.js';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a href="/" class="home" aria-label="DataHustle, home">
+      <Wordmark class="wordmark" />
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {NAV.map((item) => (
+          <li><a class="line" href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a class="link cta" href="/contact">Request a session <Arrow /></a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .bar {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+    height: 4.5rem;
+  }
+  .home { grid-column: 1 / span 3; justify-self: start; padding-block: 0.5rem; }
+  .home :global(.wordmark) { height: 1.35rem; width: auto; max-width: none; }
+  nav { grid-column: 7 / span 4; }
+  nav ul { display: flex; gap: clamp(1.25rem, 2.5vw, 2.5rem); }
+  .cta { grid-column: 11 / -1; justify-self: end; white-space: nowrap; }
+  @media (max-width: 60rem) {
+    .bar { display: flex; flex-wrap: wrap; justify-content: space-between; height: auto; padding-block: 1rem; row-gap: 0.75rem; }
+    nav { order: 3; flex-basis: 100%; }
+    .cta { font-size: 0.9375rem; }
+    .home :global(.wordmark) { height: 1.15rem; }
+  }
+</style>
