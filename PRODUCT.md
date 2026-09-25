@@ -8,12 +8,12 @@ web
 
 ## Stack
 
-Delegated, then confirmed by the user: Astro static site, hosted on Vercel or Netlify (host not yet chosen).
+Delegated, then confirmed by the user: Astro static site, hosted on Netlify.
 
 Requirements the stack must meet:
 - English only. No Greek version and no language switcher.
-- A working session-request form that delivers submissions to DataHustle's email through a hosted form service (Netlify Forms or Formspree). No custom backend.
-- Ready for GTM/GA4 with Consent Mode and a cookie consent banner. The form fires a submit event to the data layer.
+- A working session-request form using Netlify Forms. Submissions go to hello@datahustle.ai (email notification set up in the Netlify dashboard). No custom backend.
+- GTM container GTM-5MRKTKKR, loaded only after cookie consent, with Consent Mode v2 (all consent types default to denied). A successful form submission pushes a `form_submit` event to the dataLayer.
 - Fast and SEO-ready: meta tags, sitemap, OG images.
 
 ## Users
@@ -38,7 +38,12 @@ An "Intelligence & Innovation partner" that turns data into measurable business 
 
 - Service areas: data, AI, measurement architecture, strategic consulting and performance marketing.
 - Language: English only, including for Greek clients.
-- Undecided: final host (Vercel or Netlify), which decides the form service. Also undecided: the destination email for submissions and the GTM container ID.
+- Site structure at launch: Home, Services, Pulse (articles as Markdown files), Contact (the session form only). It must be able to grow, for example individual case study pages, without a redesign.
+- Still needed before launch: a privacy and cookie policy page, the founders' titles and focus lines, and real anonymized case studies.
+
+## Voice
+
+Write like a senior consultant, not a marketing agency: short, concrete, confident sentences. Never use buzzwords or clichés such as "unlock", "empower", "cutting-edge", "seamless", "leverage", "game-changer" or "in today's digital landscape". No exclamation marks. Mark anything the user must confirm with [TO CONFIRM].
 
 ## Brand Commitments
 
@@ -61,7 +66,11 @@ From DataHustle's brand book. These are binding.
 
 - Client logos in `brand/clients/` (7, as supplied, approved for public use): Adecco, The Christmas Factory, Dreamstar Event Agency, All About Events, Koilakos Carpark, Easy Service Maragopoulos, OceanSouth. They come in mixed formats, colours and backgrounds, so the site needs a consistent treatment for them.
 - Brand book and assets in `brand/`: `DataHustle_BrandBook.pdf`; wordmark SVGs (`SVG_Primary_Black.svg`, `SVG_Primary_White.svg`) and PNGs; monogram SVGs (black, white, blue) and PNGs; 32px favicons (black, blue, white); gradient SVG, PDF and PNGs; Alfabet demo fonts (see Brand Commitments).
-- Not available and must not be invented: case studies or published results, testimonials, partner badges or certifications, metrics, or named team members.
+- Founders (no photos yet; leave space for them):
+  - Thomas Gakis, [TITLE TO CONFIRM]: BSc Mathematics; MSc Advanced Information Systems, with a thesis on neural networks for time-series forecasting. [Focus TO CONFIRM]
+  - Ioannis Souliotis, [TITLE TO CONFIRM]: [Background TO CONFIRM]
+- Case studies: the site shows anonymized case studies, but the real material hasn't been supplied yet. Use [TO CONFIRM] placeholders only.
+- Not available and must not be invented: case study details or published results, testimonials, partner badges or certifications, metrics.
 
 ## Product Principles
 
