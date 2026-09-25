@@ -80,7 +80,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
       <ol class="section-body steps">
         {STEPS.map((s, i) => (
           <li class="step">
-            <span class="k note" aria-hidden="true"><i>k</i> = {i + 1}</span>
+            <span class="k note" aria-hidden="true"><span><i>k</i> = {i + 1}</span></span>
             <h3 class="sub">{s.title}</h3>
             <p class="muted">{s.text}</p>
           </li>
@@ -240,7 +240,8 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
   .clients {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    border-top: 1px solid var(--rule);
+    grid-auto-rows: 1fr;
+    margin-top: -1.25rem; /* the grid starts on the section rule */
     border-left: 1px solid var(--rule);
   }
   .clients li {
@@ -250,7 +251,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     border-right: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
   }
-  .clients img { max-width: 80%; height: auto; }
+  .clients img { max-width: 80%; height: auto; max-height: 3.5rem; object-fit: contain; }
 
   /* Findings */
   .finding:first-child { padding-top: 0.25rem; }
@@ -297,9 +298,9 @@ const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', ye
     .hero-figure { padding: 0 0 3.5rem; max-width: 36rem; width: 100%; justify-self: center; }
     .cols { grid-template-columns: 1fr; }
     .steps { grid-template-columns: 1fr 1fr; row-gap: 2.5rem; }
-    .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .clients { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; border-top: 1px solid var(--rule); }
     .clients li { aspect-ratio: 3 / 2; padding: 1rem; }
-    .clients img { max-height: 100%; width: auto; max-width: 85%; }
+    .clients img { max-width: 85%; max-height: 2.75rem; }
     .close-mark { display: none; }
     .close-body { grid-column: 1 / -1; }
   }
