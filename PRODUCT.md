@@ -11,7 +11,7 @@ web
 Delegated, then confirmed by the user: Astro static site, hosted on Vercel or Netlify (host not yet chosen).
 
 Requirements the stack must meet:
-- Bilingual: English (default) and Greek.
+- English only. No Greek version and no language switcher.
 - A working session-request form that delivers submissions to DataHustle's email through a hosted form service (Netlify Forms or Formspree). No custom backend.
 - Ready for GTM/GA4 with Consent Mode and a cookie consent banner. The form fires a submit event to the data layer.
 - Fast and SEO-ready: meta tags, sitemap, OG images.
@@ -37,7 +37,7 @@ An "Intelligence & Innovation partner" that turns data into measurable business 
 ## Capabilities and Constraints
 
 - Service areas: data, AI, measurement architecture, strategic consulting and performance marketing.
-- Languages: English (default) and Greek. Every page and the form need both versions.
+- Language: English only, including for Greek clients.
 - Undecided: final host (Vercel or Netlify), which decides the form service. Also undecided: the destination email for submissions and the GTM container ID.
 
 ## Brand Commitments
@@ -45,7 +45,7 @@ An "Intelligence & Innovation partner" that turns data into measurable business 
 From DataHustle's brand book. These are binding.
 - Tone: authoritative, precise, restrained. Mathematical and geometric logic.
 - Colors: Black #000000 (primary, typography), Off-white #F7F7F7 (background), Brand blue #3335FF (accent only, used selectively). An optional blue-to-off-white gradient, used sparingly.
-- Typeface: Alfabet (Regular, Medium, SemiBold, Bold). The files in `brand/` are Fontspring DEMO versions. They have only 95 characters: no Greek, no curly quotes, no €. They are not licensed for use on a website. A full licensed web version with Greek support is needed before launch. Until then, use a fallback for Greek and flag it.
+- Typeface: Alfabet (Regular, Medium, SemiBold, Bold). The files in `brand/` are Fontspring DEMO versions. They have only 95 characters: no curly quotes, no €, no accented letters. They are not licensed for use on a website. A full licensed web version is needed before launch. Until then, build with the demo files, avoid characters they lack, and flag it.
 - Type scale: Heading 42px Bold / 1.1; Subheading 22px SemiBold / 1.2; Body 16px / 21px; Notes 12px / 16px.
 - Emphasis uses SemiBold weight only, never color.
 - Strict grid. No shadows, no decorative effects.
@@ -68,4 +68,3 @@ From DataHustle's brand book. These are binding.
 2. Precision is the proof. With no case studies to show, the clarity and rigor of the site itself shows the expertise.
 3. Substance over the AI trend. Describe what DataHustle actually does for a business, not AI buzzwords.
 4. One quiet path to contact. A single, minimal request-a-session form, available without being pushed.
-5. Equal in both languages. Greek is a full version of the site, not an afterthought.
