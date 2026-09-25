@@ -20,6 +20,9 @@ export function mountCrosshair() {
   addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
     el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    // Keep the label on-screen: flip it left near the right edge, up near the bottom.
+    el.classList.toggle('flip-x', e.clientX > innerWidth - 190);
+    el.classList.toggle('flip-y', e.clientY > innerHeight - 40);
     const t = e.target as HTMLElement;
     const field = t.closest('input, textarea, select');
     el.classList.toggle('is-hidden', !!field);

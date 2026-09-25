@@ -20,6 +20,8 @@ export function mountJourney(section: HTMLElement) {
   const gEl = section.querySelector<HTMLElement>('[data-r-g]');
   const nEl = section.querySelector<HTMLElement>('[data-r-n]');
   const minMark = section.querySelector<HTMLElement>('[data-min-mark]');
+  const readoutEl = section.querySelector<HTMLElement>('.readout');
+  let coordsCleared = false;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
   const nav = navigator as Navigator & { deviceMemory?: number };
@@ -41,10 +43,12 @@ export function mountJourney(section: HTMLElement) {
   // Colour of the page at a given progress: the brand gradient, sampled.
   function paint() {
     if (reduced) {
-      // Static still: the section paints its own gradient; the page is paper.
-      root.style.setProperty('--bg', '#f7f7f7');
-      root.style.setProperty('--fg', '#000000');
-      root.classList.remove('on-blue');
+      // Static still: the section paints its own gradient. The header stays
+      // blue while the blue hero is under it, then turns paper.
+      const onHero = scrollY < innerHeight * 0.55;
+      root.style.setProperty('--bg', onHero ? '#3335ff' : '#f7f7f7');
+      root.style.setProperty('--fg', onHero ? '#f7f7f7' : '#000000');
+      root.classList.toggle('on-blue', onHero);
       gl?.setInk([0.969, 0.969, 0.969]);
       for (const b of beats) { b.style.opacity = '1'; b.style.visibility = 'visible'; }
       return;
@@ -57,7 +61,11 @@ export function mountJourney(section: HTMLElement) {
     root.classList.toggle('on-blue', dark);
     // Lines stay paper on blue, then turn to black as the field clears.
     const ink = smooth(0.46, 0.7, s);
-    gl?.setInk([0.969 * (1 - ink), 0.969 * (1 - ink), 0.969 * (1 - ink)]);
+    // The terrain fades out as the stage releases, so the descent exits clean.
+    gl?.setInk([0.969 * (1 - ink), 0.969 * (1 - ink), 0.969 * (1 - ink)], 1 - smooth(0.93, 1, p));
+    if (readoutEl) readoutEl.style.opacity = (1 - smooth(0.84, 0.92, p)).toFixed(3);
+    if (p >= 0.08 && !coordsCleared) { window.dispatchEvent(new CustomEvent('xhair:coords', { detail: null })); coordsCleared = true; }
+    if (p < 0.08) coordsCleared = false;
     gl?.setProgress(p);
 
     for (const b of beats) {

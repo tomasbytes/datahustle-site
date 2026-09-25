@@ -116,13 +116,17 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
   const terrainCount = terrain.length / 3;
 
   // ---------- particles ----------
-  let count = opts.tier === 'full' ? 4200 : 1400;
+  const baseCount = opts.tier === 'full' ? 4200 : 1400;
+  let count = baseCount;
   const MAX = 6000;
   const px = new Float32Array(MAX), py = new Float32Array(MAX), vx = new Float32Array(MAX), vy = new Float32Array(MAX);
   const age = new Float32Array(MAX), still = new Float32Array(MAX);
   const seg = new Float32Array(MAX * 6);
   const partBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, partBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, seg.byteLength, gl.DYNAMIC_DRAW); // allocated once
   let lead = { k: 0 };
+  let cursor = 1;
   const spawn = (i: number, x?: number, y?: number) => {
     px[i] = x ?? (Math.random() * 2 - 1) * HALF * 0.98;
     py[i] = y ?? (Math.random() * 2 - 1) * HALF * 0.98;
@@ -173,6 +177,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     const t = (plane - a[1]) / (b[1] - a[1]);
     if (!isFinite(t) || t < 0) return null;
     const wx = a[0] + (b[0] - a[0]) * t, wz = a[2] + (b[2] - a[2]) * t;
+    if (!Number.isFinite(wx) || !Number.isFinite(wz)) return null;
     return { x: wx, y: -wz };
   }
 
@@ -200,7 +205,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
       age[i] += dt;
       still[i] = sp < 0.03 ? still[i] + dt : 0;
       if (i === 0) lead.k++;
-      if (Math.abs(x) > HALF || Math.abs(y) > HALF || still[i] > 1.2 || age[i] > 14) { spawn(i); continue; }
+      if (!Number.isFinite(x) || !Number.isFinite(y) || Math.abs(x) > HALF || Math.abs(y) > HALF || still[i] > 1.2 || age[i] > 14) { spawn(i); continue; }
       px[i] = x; py[i] = y;
     }
   }
@@ -220,6 +225,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
 
   let lineRGB = [0.969, 0.969, 0.969];
   let lastZs = 1;
+  let fade = 1;
   function draw() {
     const far = camera();
     gl!.viewport(0, 0, canvas.width, canvas.height);
@@ -234,14 +240,14 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     gl!.bindBuffer(gl!.ARRAY_BUFFER, terrainBuf);
     gl!.enableVertexAttribArray(aP);
     gl!.vertexAttribPointer(aP, 3, gl!.FLOAT, false, 0, 0);
-    gl!.uniform4f(uCol, lineRGB[0], lineRGB[1], lineRGB[2], opts.tier === 'full' ? 0.34 : 0.4);
+    gl!.uniform4f(uCol, lineRGB[0], lineRGB[1], lineRGB[2], (opts.tier === 'full' ? 0.34 : 0.4) * fade);
     gl!.drawArrays(gl!.LINES, 0, terrainCount);
 
     fillSegments(zs);
     gl!.bindBuffer(gl!.ARRAY_BUFFER, partBuf);
-    gl!.bufferData(gl!.ARRAY_BUFFER, seg.subarray(0, count * 6), gl!.DYNAMIC_DRAW);
+    gl!.bufferSubData(gl!.ARRAY_BUFFER, 0, seg.subarray(0, count * 6));
     gl!.vertexAttribPointer(aP, 3, gl!.FLOAT, false, 0, 0);
-    gl!.uniform4f(uCol, lineRGB[0], lineRGB[1], lineRGB[2], 0.95);
+    gl!.uniform4f(uCol, lineRGB[0], lineRGB[1], lineRGB[2], 0.95 * fade);
     gl!.drawArrays(gl!.LINES, 0, count * 2);
   }
 
@@ -262,8 +268,11 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     step(dt);
     draw();
     // If frames run long for a sustained stretch, halve the particles.
-    slow = dt > 1 / 45 ? slow + 1 : Math.max(0, slow - 1);
+    // Sustained long frames halve the particles; a sustained fast stretch
+    // restores them, so one hitch does not cost the session its detail.
+    slow = dt > 1 / 45 ? slow + 1 : slow - 1;
     if (slow > 90 && count > 600) { count = Math.round(count / 2); slow = 0; }
+    else if (slow < -240 && count < baseCount) { count = Math.min(baseCount, count * 2); slow = 0; }
     raf = requestAnimationFrame(frame);
   }
 
@@ -281,7 +290,7 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     stop() { running = false; cancelAnimationFrame(raf); },
     resize() { resize(); if (!running) draw(); },
     setProgress(p: number) { progress = p; if (!running) draw(); },
-    setInk(rgb: [number, number, number]) { lineRGB = rgb; if (!running) draw(); },
+    setInk(rgb: [number, number, number], alpha = 1) { lineRGB = rgb; fade = alpha; if (!running) draw(); },
     pointerMove(cx: number, cy: number) {
       const d = toDomain(cx, cy);
       pointer = d ? { ...d, active: Math.abs(d.x) < HALF + 0.5 && Math.abs(d.y) < HALF + 0.5 } : { x: 0, y: 0, active: false };
@@ -291,11 +300,13 @@ export function createLandscape(canvas: HTMLCanvasElement, opts: { tier: Tier; s
     burst(cx: number, cy: number, n = 360) {
       const d = toDomain(cx, cy);
       if (!d) return;
-      // Reuse the oldest particles so the total stays bounded.
-      const idx = Array.from({ length: count }, (_, i) => i).sort((a, b) => age[b] - age[a]).slice(0, n);
-      for (const i of idx) { const r = Math.sqrt(Math.random()) * 0.28, t = Math.random() * Math.PI * 2; spawn(i, d.x + r * Math.cos(t), d.y + r * Math.sin(t)); }
+      // Recycle particles round-robin (index 0 is the readout's lead).
+      for (let j = 0; j < n; j++) {
+        cursor = 1 + ((cursor - 1 + 1) % (count - 1));
+        const i = cursor; const r = Math.sqrt(Math.random()) * 0.28, t = Math.random() * Math.PI * 2; spawn(i, d.x + r * Math.cos(t), d.y + r * Math.sin(t)); }
     },
     readout(): Readout {
+      if (!Number.isFinite(px[0]) || !Number.isFinite(py[0])) spawn(0);
       const [gx, gy] = grad(px[0], py[0]);
       return { k: lead.k, f: f(px[0], py[0]), g: Math.hypot(gx, gy), n: count };
     },

@@ -26,8 +26,10 @@ export function mountMethod(section: HTMLElement) {
       const svg = path.ownerSVGElement!;
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       svg.setAttribute('preserveAspectRatio', 'none');
-      let d = `M 0 ${(0.2 * h).toFixed(1)}`;
+      // Start just before step 1, clear of the intro copy.
+      let d = `M ${(0.2 * w - 56).toFixed(1)} ${(0.3 * h).toFixed(1)}`;
       for (let i = 0; i < 4; i++) d += ` H ${(0.2 * (i + 1) * w).toFixed(1)} V ${((0.3 + 0.1 * i) * h).toFixed(1)}`;
+      d = d.replace(/^(M [\d.]+ [\d.]+) H ([\d.]+) V [\d.]+/, '$1 H $2');
       d += ` H ${w}`;
       path.setAttribute('d', d);
     }
@@ -97,7 +99,7 @@ export function mountConstellation(section: HTMLElement) {
         if (bj > i || (bj >= 0 && i % 2)) d += `M${a[0].toFixed(1)},${a[1].toFixed(1)}L${centres[bj][0].toFixed(1)},${centres[bj][1].toFixed(1)}`;
       });
       lines.querySelector('path')!.setAttribute('d', d);
-      lines.style.opacity = (0.5 * (1 - t)).toFixed(3);
+      lines.style.opacity = t > 0.98 ? '0' : (0.5 * (1 - t)).toFixed(3);
     }
   }
   let raf = 0;
